@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.Domain", "TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj", "{F63A407A-4EB7-4223-8730-B44E504476CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.Commanding", "TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj", "{1CBB2A4B-B50B-4203-BE76-30BE461969AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.RavenDb", "TheRing.CQRS.RavenDb\TheRing.CQRS.RavenDb.csproj", "{BFFE2398-DF5E-440D-92B6-1B903A533A60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.Eventing", "TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj", "{B1B87D37-25CB-4953-97B7-2A7627798D25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.MassTransit", "TheRing.CQRS.MassTransit\TheRing.CQRS.MassTransit.csproj", "{B64E2223-668B-4FAA-891B-641C95FB5844}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SeedWork", "SeedWork", "{6D207E9C-1D1B-4AF8-8BE8-8436E013A9FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging", "Messaging", "{BBD965AA-4091-4970-81C5-05E93173C53E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{277DD0C0-A404-42CE-BD0D-392556CD8762}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7FC34BBC-C0AE-4339-9471-3345CC0F7ACF}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F63A407A-4EB7-4223-8730-B44E504476CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F63A407A-4EB7-4223-8730-B44E504476CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F63A407A-4EB7-4223-8730-B44E504476CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F63A407A-4EB7-4223-8730-B44E504476CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1B87D37-25CB-4953-97B7-2A7627798D25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1B87D37-25CB-4953-97B7-2A7627798D25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1B87D37-25CB-4953-97B7-2A7627798D25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1B87D37-25CB-4953-97B7-2A7627798D25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B64E2223-668B-4FAA-891B-641C95FB5844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B64E2223-668B-4FAA-891B-641C95FB5844}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B64E2223-668B-4FAA-891B-641C95FB5844}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B64E2223-668B-4FAA-891B-641C95FB5844}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1CBB2A4B-B50B-4203-BE76-30BE461969AE} = {6D207E9C-1D1B-4AF8-8BE8-8436E013A9FB}
+		{B1B87D37-25CB-4953-97B7-2A7627798D25} = {6D207E9C-1D1B-4AF8-8BE8-8436E013A9FB}
+		{F63A407A-4EB7-4223-8730-B44E504476CF} = {6D207E9C-1D1B-4AF8-8BE8-8436E013A9FB}
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60} = {277DD0C0-A404-42CE-BD0D-392556CD8762}
+		{B64E2223-668B-4FAA-891B-641C95FB5844} = {BBD965AA-4091-4970-81C5-05E93173C53E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35
+	EndGlobalSection
+EndGlobal
