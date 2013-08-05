@@ -44,7 +44,7 @@
                     {
                         sbc.UseRabbitMq();
 
-                        sbc.ReceiveFrom(queue);
+                        sbc.ReceiveFrom("rabbitmq://" + queue);
 
                         sbc.Subscribe(
                             c =>

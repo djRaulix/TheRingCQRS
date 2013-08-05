@@ -10,7 +10,7 @@
     using TheRing.CQRS.Commanding;
 
     public class CommandBus : ICommandBus
-    {
+    {      
         #region Fields
 
         private readonly IServiceBus bus;
@@ -21,9 +21,10 @@
 
         #region Constructors and Destructors
 
-        public CommandBus(IServiceBus bus)
+        public CommandBus(IServiceBus bus, string requestQueue)
         {
             this.bus = bus;
+            this.commandUri = new Uri(requestQueue);
         }
 
         #endregion
@@ -33,7 +34,7 @@
         public void Send<T>(T command, Guid correlationId) where T : class, ICommand, new()
         {
             command.SetCorrelationId(correlationId);
-            this.CommandEndPoint().Send(command);
+            this.RequestEndPoint().Send(command);
         }
 
         public void Send<T>(T command) where T : class, ICommand, new()
@@ -57,7 +58,7 @@
 
             var response = RequestResult.Ok;
 
-            this.CommandEndPoint().SendRequest(
+            this.RequestEndPoint().SendRequest(
                 command, 
                 this.bus, 
                 c =>
@@ -83,7 +84,7 @@
 
         #region Methods
 
-        private IEndpoint CommandEndPoint()
+        private IEndpoint RequestEndPoint()
         {
             return this.bus.GetEndpoint(this.commandUri);
         }

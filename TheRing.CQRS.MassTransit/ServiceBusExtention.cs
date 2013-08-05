@@ -11,9 +11,9 @@
     {
         #region Public Methods and Operators
 
-        public static ICommandBus CommandBus(this IServiceBus bus)
+        public static ICommandBus CommandBus(this IServiceBus bus, string requestQueue)
         {
-            return new CommandBus(bus);
+            return new CommandBus(bus, requestQueue);
         }
 
         public static IEventBus EventBus(this IServiceBus bus)

@@ -44,7 +44,7 @@
             set
             {
                 this.bus = value;
-                this.CommandBus = this.bus.CommandBus();
+                this.CommandBus = this.bus.CommandBus(this.RequestQueue);
             }
         }
 
@@ -55,6 +55,8 @@
         #region Properties
 
         protected ICommandBus CommandBus { get; private set; }
+
+        protected abstract string RequestQueue { get; }
 
         #endregion
 
