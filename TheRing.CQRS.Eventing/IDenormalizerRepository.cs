@@ -1,6 +1,10 @@
 ﻿namespace TheRing.CQRS.Eventing
 {
+    #region using
+
     using System;
+
+    #endregion
 
     public interface IDenormalizerRepository
     {

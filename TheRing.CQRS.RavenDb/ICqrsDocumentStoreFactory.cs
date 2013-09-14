@@ -1,8 +1,12 @@
 ﻿namespace TheRing.CQRS.RavenDb
 {
+    #region using
+
     using Raven.Client;
 
-    public interface IDocumentStoreFactory
+    #endregion
+
+    public interface ICqrsDocumentStoreFactory
     {
         #region Public Properties
 

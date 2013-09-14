@@ -1,9 +1,13 @@
 namespace TheRing.CQRS.Domain
 {
+    #region using
+
     using System;
     using System.Collections.Generic;
 
     using TheRing.CQRS.Eventing;
+
+    #endregion
 
     public abstract class AggregateRoot
     {
@@ -23,10 +27,7 @@ namespace TheRing.CQRS.Domain
 
         internal IEnumerable<Event> Changes
         {
-            get
-            {
-                return this.changes;
-            }
+            get { return this.changes; }
         }
 
         #endregion
@@ -50,6 +51,19 @@ namespace TheRing.CQRS.Domain
             }
         }
 
+        private void ApplyEvent(Event @event)
+        {
+            this.version++;
+            if (!@event.Volatile)
+            {
+                this.ApplyGeneric(@event);
+            }
+        }
+
+        protected virtual void ApplyGeneric(Event @event)
+        {
+        }
+
         internal void SetId(Guid aggId)
         {
             this.id = aggId;
@@ -63,19 +77,6 @@ namespace TheRing.CQRS.Domain
             @event.TimeStamp = DateTime.UtcNow;
             @event.CorrelationId = this.currentCorrelationId;
             this.changes.Enqueue(@event);
-        }
-
-        protected virtual void ApplyGeneric(Event @event)
-        {
-        }
-
-        private void ApplyEvent(Event @event)
-        {
-            this.version++;
-            if (!@event.Volatile)
-            {
-                this.ApplyGeneric(@event);
-            }
         }
 
         #endregion

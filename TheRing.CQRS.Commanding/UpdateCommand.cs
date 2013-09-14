@@ -1,8 +1,12 @@
 namespace TheRing.CQRS.Commanding
 {
+    #region using
+
     using System;
 
-    public abstract class UpdateCommand : Command
+    #endregion
+
+    public abstract class UpdateCommand : Command, ICommand
     {
         #region Public Properties
 

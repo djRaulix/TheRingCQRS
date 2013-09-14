@@ -1,9 +1,13 @@
 namespace TheRing.CQRS.MassTransit.Commanding
 {
+    #region using
+
     using global::MassTransit;
 
     using TheRing.CQRS.Commanding;
     using TheRing.CQRS.Domain;
+
+    #endregion
 
     public class CommandHandler<TAgg, TCommand> : Consumes<TCommand>.Context
         where TCommand : class, ICommand where TAgg : AggregateRoot

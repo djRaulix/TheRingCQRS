@@ -1,5 +1,9 @@
-﻿using System.Reflection;
+﻿#region using
+
+using System.Reflection;
 using System.Runtime.InteropServices;
+
+#endregion
 
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations

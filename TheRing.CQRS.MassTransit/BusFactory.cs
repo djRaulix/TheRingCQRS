@@ -1,5 +1,7 @@
 ﻿namespace TheRing.CQRS.MassTransit
 {
+    #region using
+
     using System;
     using System.Collections.Generic;
 
@@ -8,6 +10,8 @@
     using global::MassTransit;
 
     using global::MassTransit.Saga;
+
+    #endregion
 
     public class BusFactory : IBusFactory
     {
@@ -37,39 +41,42 @@
             return this.buses[queue];
         }
 
-        public IServiceBus Set(string queue, IEnumerable<KeyValuePair<Type, Func<object>>> consumers = null, IEnumerable<Type> sagas = null)
+        public IServiceBus Set(
+            string queue, 
+            IEnumerable<KeyValuePair<Type, Func<object>>> consumers = null, 
+            IEnumerable<Type> sagas = null)
         {
             var bus = ServiceBusFactory.New(
                 sbc =>
-                    {
-                        sbc.UseRabbitMq();
+                {
+                    sbc.UseRabbitMq();
 
-                        sbc.ReceiveFrom("rabbitmq://" + queue);
+                    sbc.ReceiveFrom(queue);
 
-                        sbc.Subscribe(
-                            c =>
+                    sbc.Subscribe(
+                        c =>
+                        {
+                            if (consumers != null)
+                            {
+                                foreach (var consumer in consumers)
                                 {
-                                    if (consumers != null)
-                                    {
-                                        foreach (var consumer in consumers)
-                                        {
-                                            var getter = consumer.Value;
-                                            c.Consumer(consumer.Key, t => getter).Permanent();
-                                        }
-                                    }
+                                    var getter = consumer.Value;
+                                    c.Consumer(consumer.Key, t => getter()).Permanent();
+                                }
+                            }
 
-                                    if (sagas == null)
-                                    {
-                                        return;
-                                    }
+                            if (sagas == null)
+                            {
+                                return;
+                            }
 
-                                    foreach (var saga in sagas)
-                                    {
-                                        var repositoryType = typeof(ISagaRepository<>).MakeGenericType(saga);
-                                        c.FastInvoke(new[] { saga }, "Saga", this.container(repositoryType));
-                                    }
-                                });
-                    });
+                            foreach (var saga in sagas)
+                            {
+                                var repositoryType = typeof(ISagaRepository<>).MakeGenericType(saga);
+                                c.FastInvoke(new[] { saga }, "Saga", this.container(repositoryType));
+                            }
+                        });
+                });
 
             this.buses[queue] = bus;
 

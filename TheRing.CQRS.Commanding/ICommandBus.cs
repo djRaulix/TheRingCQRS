@@ -1,6 +1,10 @@
 ﻿namespace TheRing.CQRS.Commanding
 {
+    #region using
+
     using System;
+
+    #endregion
 
     public interface ICommandBus
     {

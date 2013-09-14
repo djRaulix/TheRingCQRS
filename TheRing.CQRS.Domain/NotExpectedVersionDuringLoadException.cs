@@ -1,6 +1,10 @@
 ﻿namespace TheRing.CQRS.Domain
 {
+    #region using
+
     using System;
+
+    #endregion
 
     [Serializable]
     public class NotExpectedVersionDuringLoadException : Exception

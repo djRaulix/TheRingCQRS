@@ -1,6 +1,10 @@
 namespace TheRing.CQRS.Commanding
 {
+    #region using
+
     using System;
+
+    #endregion
 
     public interface ICommand
     {
@@ -9,6 +13,8 @@ namespace TheRing.CQRS.Commanding
         Guid CorrelationId { get; }
 
         bool ExpectResponse { get; set; }
+
+        Guid Id { get; }
 
         DateTime TimeStamp { get; }
 

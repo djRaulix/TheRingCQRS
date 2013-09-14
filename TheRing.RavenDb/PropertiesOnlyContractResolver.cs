@@ -1,12 +1,15 @@
-﻿namespace TheRing.CQRS.RavenDb
-
+﻿namespace TheRing.RavenDb
 {
+    #region using
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
     using Raven.Imports.Newtonsoft.Json.Serialization;
+
+    #endregion
 
     public class PropertiesOnlyContractResolver : DefaultContractResolver
     {

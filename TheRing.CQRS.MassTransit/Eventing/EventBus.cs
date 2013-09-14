@@ -1,8 +1,12 @@
 ﻿namespace TheRing.CQRS.MassTransit.Eventing
 {
+    #region using
+
     using global::MassTransit;
 
     using TheRing.CQRS.Eventing;
+
+    #endregion
 
     public class EventBus : IEventBus
     {
@@ -25,7 +29,7 @@
 
         public void Publish(Event @event)
         {
-            this.bus.Publish(@event);
+            this.bus.Publish((dynamic)@event);
         }
 
         #endregion

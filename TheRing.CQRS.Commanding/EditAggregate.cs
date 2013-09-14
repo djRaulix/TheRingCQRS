@@ -1,6 +1,10 @@
 namespace TheRing.CQRS.Commanding
 {
+    #region using
+
     using TheRing.CQRS.Domain;
+
+    #endregion
 
     public class EditAggregate<TAgg> : IEditAggregate<TAgg>
         where TAgg : AggregateRoot
@@ -24,8 +28,10 @@ namespace TheRing.CQRS.Commanding
 
         public TAgg Get(ICommand command)
         {
-            var updateCommand = command as IUpdateCommand;
-            return updateCommand == null ? this.repository.Create<TAgg>() : this.repository.Get<TAgg>(updateCommand.Id, updateCommand.ExpectedVersion);
+            var updateCommand = command as UpdateCommand;
+            return updateCommand == null
+                ? this.repository.Create<TAgg>(command.Id)
+                : this.repository.Get<TAgg>(command.Id, updateCommand.ExpectedVersion);
         }
 
         public void Save(AggregateRoot aggregateRoot)

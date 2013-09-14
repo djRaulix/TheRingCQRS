@@ -1,21 +1,25 @@
 ﻿namespace TheRing.CQRS.MassTransit.Querying
 {
+    #region using
+
     using global::MassTransit;
 
     using TheRing.CQRS.Eventing;
 
-    public class Denormalizer<TEvent> : Consumes<TEvent>.All
-        where TEvent : Event
+    #endregion
+
+    public class Denormalizer<TDenormalizer, TEvent> : Consumes<TEvent>.All
+        where TDenormalizer : IDenormalizeEvent<TEvent> where TEvent : Event
     {
         #region Fields
 
-        private readonly IDenormalizeEvent<TEvent> denormalizeEvent;
+        private readonly TDenormalizer denormalizeEvent;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public Denormalizer(IDenormalizeEvent<TEvent> denormalizeEvent)
+        public Denormalizer(TDenormalizer denormalizeEvent)
         {
             this.denormalizeEvent = denormalizeEvent;
         }

@@ -1,5 +1,7 @@
 ﻿namespace TheRing.CQRS.RavenDb
 {
+    #region using
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,6 +11,9 @@
 
     using TheRing.CQRS.Domain;
     using TheRing.CQRS.Eventing;
+    using TheRing.RavenDb;
+
+    #endregion
 
     public class EventStore : IEventStore
     {
@@ -32,11 +37,24 @@
 
         #region Public Methods and Operators
 
-        public IEnumerable<Event> GetEvents(Guid id, int fromVersion = 0, int toVersion = int.MaxValue)
+        public IEnumerable<Event> GetEvents(Guid id)
         {
             using (var session = this.documentStore.OpenSession())
             {
-                var query = session.Query<Event>().Where(e => e.EventSourcedId == id).Customize(x => x.WaitForNonStaleResults());
+                return
+                    session.Advanced.LoadStartingWith<Event>(
+                        string.Concat(
+                            id, 
+                            this.documentStore.Conventions.IdentityPartsSeparator));
+            }
+        }
+
+        public IEnumerable<Event> GetEvents(Guid id, int fromVersion, int toVersion)
+        {
+            using (var session = this.documentStore.OpenSession())
+            {
+                var query =
+                    session.Query<Event>().Where(e => e.EventSourcedId == id).Customize(x => x.WaitForNonStaleResults());
                 if (fromVersion > 0)
                 {
                     query = query.Where(m => m.EventSourcedVersion > fromVersion - 1);
@@ -47,7 +65,7 @@
                     query = query.Where(m => m.EventSourcedVersion < toVersion + 1);
                 }
 
-                return query.OrderBy(e => e.EventSourcedVersion);
+                return session.Advanced.Stream(query.OrderBy(e => e.EventSourcedVersion)).ToList();
             }
         }
 
@@ -61,7 +79,12 @@
 
                 foreach (var uncommittedEvent in events)
                 {
-                    session.Store(uncommittedEvent, string.Format("{0}/{1}", uncommittedEvent.EventSourcedId, uncommittedEvent.EventSourcedVersion));
+                    var id = string.Concat(
+                        uncommittedEvent.EventSourcedId, 
+                        this.documentStore.Conventions.IdentityPartsSeparator, 
+                        uncommittedEvent.EventSourcedVersion);
+
+                    session.Store(uncommittedEvent, id);
                 }
 
                 try
@@ -75,7 +98,7 @@
                 }
             }
 
-            foreach (dynamic @event in events)
+            foreach (var @event in events)
             {
                 this.eventBus.Publish(@event);
             }

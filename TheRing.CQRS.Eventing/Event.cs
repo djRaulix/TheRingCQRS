@@ -1,6 +1,10 @@
 namespace TheRing.CQRS.Eventing
 {
+    #region using
+
     using System;
+
+    #endregion
 
     public abstract class Event
     {
@@ -14,20 +18,14 @@ namespace TheRing.CQRS.Eventing
 
         public virtual int EventVersion
         {
-            get
-            {
-                return 0;
-            }
+            get { return 0; }
         }
 
         public DateTime TimeStamp { get; set; }
 
         public virtual bool Volatile
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         #endregion

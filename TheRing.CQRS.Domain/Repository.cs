@@ -1,11 +1,13 @@
 ﻿namespace TheRing.CQRS.Domain
 {
+    #region using
+
     using System;
     using System.Linq;
 
-    using Magnum;
-
     using TheRing.CQRS.Eventing;
+
+    #endregion
 
     public class Repository : IRepository
     {
@@ -29,17 +31,18 @@
 
         #region Public Methods and Operators
 
-        public TAgg Create<TAgg>() where TAgg : AggregateRoot
+        public TAgg Create<TAgg>(Guid id) where TAgg : AggregateRoot
         {
             var aggregateRoot = this.aggregateRootFactory.Create<TAgg>();
-            aggregateRoot.SetId(CombGuid.Generate());
+            aggregateRoot.SetId(id);
             return aggregateRoot;
         }
 
         public TAgg Get<TAgg>(Guid id, int? expectedVersion = null) where TAgg : AggregateRoot
         {
             var expected = expectedVersion != null;
-            var events = (expected ? this.store.GetEvents(id, toVersion: expectedVersion.Value) : this.store.GetEvents(id)).ToList();
+            var events =
+                (expected ? this.store.GetEvents(id, 0, expectedVersion.Value) : this.store.GetEvents(id)).ToList();
 
             if (!events.Any())
             {
@@ -51,8 +54,7 @@
                 throw new NotExpectedVersionDuringLoadException(id, expectedVersion.Value);
             }
 
-            var aggregateRoot = this.aggregateRootFactory.Create<TAgg>();
-            aggregateRoot.SetId(id);
+            var aggregateRoot = this.Create<TAgg>(id);
 
             aggregateRoot.LoadFromHistory(events);
             return aggregateRoot;

@@ -1,5 +1,7 @@
 ﻿namespace TheRing.CQRS.MassTransit
 {
+    #region using
+
     using System;
 
     using Magnum.StateMachine;
@@ -9,6 +11,8 @@
     using global::MassTransit.Saga;
 
     using TheRing.CQRS.Commanding;
+
+    #endregion
 
     public abstract class SagaStateMachineBase<T> : SagaStateMachine<T>, ISaga
         where T : SagaStateMachineBase<T>
@@ -62,7 +66,9 @@
 
         #region Methods
 
-        protected static global::MassTransit.Saga.EventBinder<T, V> Correlate<V>(Event<V> targetEvent, Func<V, Guid> property)
+        protected static global::MassTransit.Saga.EventBinder<T, V> Correlate<V>(
+            Event<V> targetEvent, 
+            Func<V, Guid> property)
         {
             return Correlate(targetEvent).By((s, e) => property(e) == s.CorrelationId).UseId(property);
         }

@@ -1,6 +1,7 @@
 ﻿namespace TheRing.CQRS.RavenDb
-
 {
+    #region using
+
     using System;
 
     using Magnum.Reflection;
@@ -8,6 +9,8 @@
     using Raven.Client;
 
     using TheRing.CQRS.Eventing;
+
+    #endregion
 
     public class DenormalizerRepository : IDenormalizerRepository
     {

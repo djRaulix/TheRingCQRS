@@ -1,6 +1,10 @@
 namespace TheRing.CQRS.Commanding
 {
+    #region using
+
     using TheRing.CQRS.Domain;
+
+    #endregion
 
     public interface IEditAggregate<out TAgg>
         where TAgg : AggregateRoot

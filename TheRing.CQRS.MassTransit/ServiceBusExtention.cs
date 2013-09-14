@@ -1,11 +1,15 @@
 ﻿namespace TheRing.CQRS.MassTransit
 {
+    #region using
+
     using global::MassTransit;
 
     using TheRing.CQRS.Commanding;
     using TheRing.CQRS.Eventing;
     using TheRing.CQRS.MassTransit.Commanding;
     using TheRing.CQRS.MassTransit.Eventing;
+
+    #endregion
 
     public static class ServiceBusExtention
     {

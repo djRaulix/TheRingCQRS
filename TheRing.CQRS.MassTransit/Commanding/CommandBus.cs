@@ -1,16 +1,19 @@
 ﻿namespace TheRing.CQRS.MassTransit.Commanding
 {
+    #region using
+
     using System;
 
     using Magnum;
-    using Magnum.Extensions;
 
     using global::MassTransit;
 
     using TheRing.CQRS.Commanding;
 
+    #endregion
+
     public class CommandBus : ICommandBus
-    {      
+    {
         #region Fields
 
         private readonly IServiceBus bus;
@@ -55,18 +58,21 @@
         public RequestResult SendRequest<T>(T command, Guid correlationId) where T : class, ICommand, new()
         {
             command.SetCorrelationId(correlationId);
-
-            var response = RequestResult.Ok;
+            command.ExpectResponse = true;
+            var response = RequestResult.Failed;
 
             this.RequestEndPoint().SendRequest(
                 command, 
                 this.bus, 
                 c =>
-                    {
-                        c.Handle<ConcurrencyExceptionResponse>(h => response = RequestResult.ConcurrencyException);
-                        c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
-                        c.HandleFault(h => response = RequestResult.Failed);
-                    });
+                {
+                    c.Handle<DoneResponse>(h => response = RequestResult.Ok);
+                    c.Handle<ConcurrencyExceptionResponse>(h => response = RequestResult.ConcurrencyException);
+
+
+// c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
+                    c.HandleFault(h => response = RequestResult.Failed);
+                });
             return response;
         }
 

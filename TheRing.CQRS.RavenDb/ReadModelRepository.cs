@@ -1,8 +1,12 @@
 ﻿namespace TheRing.CQRS.RavenDb
 {
+    #region using
+
     using System;
 
     using Raven.Client;
+
+    #endregion
 
     public abstract class ReadModelRepository : IDisposable
     {
