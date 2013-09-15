@@ -3,4 +3,6 @@
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File69DDEE04D3C1524694E7EC374DC74262/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=69DDEE04D3C1524694E7EC374DC74262/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=69DDEE04D3C1524694E7EC374DC74262/RelativePath/@EntryValue">..\..\..\projects\shared-resharper-settings.DotSettings</s:String>
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=69DDEE04D3C1524694E7EC374DC74262/AbsolutePath/@EntryValue">E:\projects\shared-resharper-settings.DotSettings</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=69DDEE04D3C1524694E7EC374DC74262/AbsolutePath/@EntryValue">E:\projects\shared-resharper-settings.DotSettings</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/AttributeFilterXml/@EntryValue">&lt;data /&gt;</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/CoverageFilterXml/@EntryValue">&lt;data&gt;&lt;IncludeFilters /&gt;&lt;ExcludeFilters /&gt;&lt;/data&gt;</s:String></wpf:ResourceDictionary>

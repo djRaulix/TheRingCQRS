@@ -40,16 +40,14 @@
 
         public TAgg Get<TAgg>(Guid id, int? expectedVersion = null) where TAgg : AggregateRoot
         {
-            var expected = expectedVersion != null;
-            var events =
-                (expected ? this.store.GetEvents(id, 0, expectedVersion.Value) : this.store.GetEvents(id)).ToList();
+            var events = this.store.GetEvents(id).ToList();
 
             if (!events.Any())
             {
                 throw new UnknownAggregateRootException(id);
             }
 
-            if (expected && events.Last().EventSourcedVersion != expectedVersion)
+            if (expectedVersion.HasValue && events.Last().EventSourcedVersion != expectedVersion)
             {
                 throw new NotExpectedVersionDuringLoadException(id, expectedVersion.Value);
             }
