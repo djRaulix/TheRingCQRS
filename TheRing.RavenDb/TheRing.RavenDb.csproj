@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\Git projects\TheRingCQRS\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Raven.Abstractions">
       <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Abstractions.dll</HintPath>
     </Reference>
@@ -42,13 +39,7 @@
       <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentStoreFactory.cs" />

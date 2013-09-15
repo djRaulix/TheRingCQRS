@@ -51,7 +51,6 @@
     <Reference Include="Raven.Client.Lightweight">
       <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -62,7 +61,7 @@
       <Name>TheRing.CQRS.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
-      <Project>{b1b87d37-25cb-4953-97b7-2a7627798d25}</Project>
+      <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>
       <Name>TheRing.CQRS.Eventing</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.RavenDb\TheRing.RavenDb.csproj">
