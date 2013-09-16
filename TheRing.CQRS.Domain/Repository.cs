@@ -34,27 +34,26 @@
         public TAgg Create<TAgg>(Guid id) where TAgg : AggregateRoot
         {
             var aggregateRoot = this.aggregateRootFactory.Create<TAgg>();
-            aggregateRoot.SetId(id);
+            aggregateRoot.Id = id;
             return aggregateRoot;
         }
 
         public TAgg Get<TAgg>(Guid id, int? expectedVersion = null) where TAgg : AggregateRoot
         {
-            var events = this.store.GetEvents(id).ToList();
+            var aggregateRoot = this.Create<TAgg>(id);
 
-            if (!events.Any())
+            aggregateRoot.LoadFromHistory(this.store.GetEvents(id));
+
+            if (aggregateRoot.Version == 0)
             {
                 throw new UnknownAggregateRootException(id);
             }
 
-            if (expectedVersion.HasValue && events.Last().EventSourcedVersion != expectedVersion)
+            if (expectedVersion.HasValue && aggregateRoot.Version != expectedVersion)
             {
                 throw new NotExpectedVersionDuringLoadException(id, expectedVersion.Value);
             }
-
-            var aggregateRoot = this.Create<TAgg>(id);
-
-            aggregateRoot.LoadFromHistory(events);
+            
             return aggregateRoot;
         }
 

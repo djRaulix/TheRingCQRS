@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{07F92D
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.Test", "TheRing.Test\TheRing.Test.csproj", "{E2AF2A57-BE76-4811-9968-DF7568DAF757}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.Test", "TheRing.Test\TheRing.Test.csproj", "{C53B5138-1B0A-438A-9439-3A0E6E7AA329}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,10 +70,10 @@ Global
 		{084F829D-9458-486F-A7D7-A75AF9FEA94A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{084F829D-9458-486F-A7D7-A75AF9FEA94A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{084F829D-9458-486F-A7D7-A75AF9FEA94A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E2AF2A57-BE76-4811-9968-DF7568DAF757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2AF2A57-BE76-4811-9968-DF7568DAF757}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2AF2A57-BE76-4811-9968-DF7568DAF757}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2AF2A57-BE76-4811-9968-DF7568DAF757}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C53B5138-1B0A-438A-9439-3A0E6E7AA329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C53B5138-1B0A-438A-9439-3A0E6E7AA329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C53B5138-1B0A-438A-9439-3A0E6E7AA329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C53B5138-1B0A-438A-9439-3A0E6E7AA329}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

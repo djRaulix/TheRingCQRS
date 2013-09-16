@@ -17,9 +17,9 @@ namespace TheRing.CQRS.Domain
 
         private Guid currentCorrelationId;
 
-        private Guid id;
+        internal Guid Id {get; set;}
 
-        private int version;
+        internal int Version { get; private set; }
 
         #endregion
 
@@ -64,16 +64,11 @@ namespace TheRing.CQRS.Domain
         {
         }
 
-        internal void SetId(Guid aggId)
-        {
-            this.id = aggId;
-        }
-
         protected void ApplyChange(Event @event)
         {
             this.ApplyEvent(@event);
-            @event.EventSourcedId = this.id;
-            @event.EventSourcedVersion = this.version;
+            @event.EventSourcedId = this.Id;
+            @event.EventSourcedVersion = this.Version;
             @event.TimeStamp = DateTime.UtcNow;
             @event.CorrelationId = this.currentCorrelationId;
             this.changes.Enqueue(@event);
