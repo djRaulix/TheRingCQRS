@@ -53,7 +53,7 @@ namespace TheRing.CQRS.Domain
 
         private void ApplyEvent(Event @event)
         {
-            this.version++;
+            this.Version++;
             if (!@event.Volatile)
             {
                 this.ApplyGeneric(@event);

@@ -24,6 +24,7 @@
         public void ThenANewAggregateShouldBeReturned()
         {
             this.returnedAggregate.Should().BeSameAs(this.AggregateRoot);
+            this.Id.Should().Be(this.returnedAggregate.Id);
         }
 
         #endregion

@@ -30,6 +30,7 @@
         public void ThenTheExistingAggregateShouldBeReturned()
         {
             this.returnedAggregate.Should().BeSameAs(this.AggregateRoot);
+            this.Id.Should().Be(this.returnedAggregate.Id);
         }
 
         #endregion

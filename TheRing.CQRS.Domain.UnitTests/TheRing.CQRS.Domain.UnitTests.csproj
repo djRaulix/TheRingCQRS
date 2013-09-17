@@ -51,7 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeAggregate.cs" />
-    <Compile Include="Fakes\FakeEvent.cs" />
+    <Compile Include="Fakes\FakeVolatileEvent.cs" />
+    <Compile Include="Fakes\FakeNonVolatileEvent.cs" />
+    <Compile Include="WhenUsingAggregateRoot\AndCreatingANewEvent.cs" />
+    <Compile Include="WhenUsingAggregateRoot\WhenUsingAggregateRoot.cs" />
     <Compile Include="WhenUsingTheRepository\AndAskingANewAggregate.cs" />
     <Compile Include="WhenUsingTheRepository\AndAskingAnExistingAggregate.cs" />
     <Compile Include="WhenUsingTheRepository\AndAskingAnUnKnownAggregate.cs" />

@@ -36,6 +36,7 @@
         public void TheAggregateShouldBeReturned()
         {
             this.expectedAggregateRoot.Should().BeSameAs(this.AggregateRoot);
+            this.Id.Should().Be(this.expectedAggregateRoot.Id);
         }
 
         #endregion
