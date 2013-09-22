@@ -2,7 +2,6 @@
 {
     #region using
 
-    using System;
     using System.Collections.Generic;
 
     using Raven.Client;
@@ -11,7 +10,7 @@
 
     #endregion
 
-    public class DocumentStoreFactory : IDocumentStoreFactory
+    public class DocumentStoreFactory : IDocumentStoreFactory, IAddDocumenStoreFromParameters, IAddDocumenStore
     {
         #region Constants
 
@@ -21,47 +20,60 @@
 
         #region Fields
 
+        private readonly ICreateStoreStrategy createStrategy;
+
         private readonly Dictionary<string, IDocumentStore> stores = new Dictionary<string, IDocumentStore>();
 
         #endregion
 
+        #region Constructors and Destructors
+
+        public DocumentStoreFactory(ICreateStoreStrategy createStrategy)
+        {
+            this.createStrategy = createStrategy;
+        }
+
+        public DocumentStoreFactory()
+            : this(new CreateStoreStrategy())
+        {
+        }
+
+        #endregion
+
         #region Public Methods and Operators
+
+        public void AddStore(
+            DocumentStoreParameters parameters)
+        {
+            this.stores[parameters.DatabaseName] = this.SetStore(
+                parameters);
+        }
+
+        public void AddStore(string databaseName, IDocumentStore documentStore)
+        {
+            this.stores[databaseName] = documentStore;
+        }
 
         public IDocumentStore GetStore(string databaseName)
         {
             return this.stores[databaseName];
         }
 
-        public void InitStore(
-            string databaseName, 
-            Func<Type, string> findTypeTagName = null, 
-            Func<string, string> findIdentityPropertyNameFromEntityName = null, 
-            Func<string, string> transformTypeTagNameToDocumentKeyPrefix = null)
-        {
-            this.stores[databaseName] = SetStore(
-                databaseName, 
-                findTypeTagName, 
-                findIdentityPropertyNameFromEntityName, 
-                transformTypeTagNameToDocumentKeyPrefix);
-        }
-
         #endregion
 
         #region Methods
 
-        private static IDocumentStore SetStore(
-            string databaseName, 
-            Func<Type, string> findTypeTagName = null, 
-            Func<string, string> findIdentityPropertyNameFromEntityName = null, 
-            Func<string, string> transformTypeTagNameToDocumentKeyPrefix = null)
+        private IDocumentStore SetStore(
+            DocumentStoreParameters parameters)
         {
             var documentConvention = new DocumentConvention
             {
-                JsonContractResolver = new PropertiesOnlyContractResolver(), 
-                FindTypeTagName = findTypeTagName ?? (t => t.Name), 
-                FindIdentityPropertyNameFromEntityName = findIdentityPropertyNameFromEntityName ?? (entityName => "Id"), 
-                CustomizeJsonSerializer = serializer => serializer.TypeNameHandling = TypeNameHandling.All, 
-                TransformTypeTagNameToDocumentKeyPrefix = transformTypeTagNameToDocumentKeyPrefix ?? (s => s)
+                JsonContractResolver = new PropertiesOnlyContractResolver(),
+                FindTypeTagName = parameters.FindTypeTagName ?? (t => t.Name),
+                FindIdentityPropertyNameFromEntityName =
+                    parameters.FindIdentityPropertyNameFromEntityName ?? (entityName => "Id"),
+                CustomizeJsonSerializer = serializer => serializer.TypeNameHandling = TypeNameHandling.All,
+                TransformTypeTagNameToDocumentKeyPrefix = parameters.TransformTypeTagNameToDocumentKeyPrefix ?? (s => s)
             };
             documentConvention.DocumentKeyGenerator = (dbName, databaseCommands, entity) =>
             {
@@ -85,12 +97,10 @@
                     : string.Concat(prefix, documentConvention.IdentityPartsSeparator, id);
             };
 
-            var store = new DocumentStore
-            {
-                ConnectionStringName = ConnectionStringName, 
-                Conventions = documentConvention, 
-                DefaultDatabase = databaseName
-            };
+            var store = this.createStrategy.New(
+                documentConvention,
+                parameters.DatabaseName,
+                parameters.ConnectionStringName ?? ConnectionStringName);
 
             store.Initialize();
 

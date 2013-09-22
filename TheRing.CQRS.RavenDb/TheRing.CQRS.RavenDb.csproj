@@ -36,7 +36,7 @@
     <Compile Include="CqrsDocumentStoreFactory.cs" />
     <Compile Include="EventStore.cs" />
     <Compile Include="ICqrsDocumentStoreFactory.cs" />
-    <Compile Include="IDocumentStoreFactoryInitializer.cs" />
+    <Compile Include="ICqrsDocumentStoreFactoryInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadModelRepository.cs" />
   </ItemGroup>

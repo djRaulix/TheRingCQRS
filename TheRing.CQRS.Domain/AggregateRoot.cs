@@ -47,13 +47,13 @@ namespace TheRing.CQRS.Domain
         {
             foreach (var @event in history)
             {
+                this.Version = @event.EventSourcedVersion;
                 this.ApplyEvent(@event);
             }
         }
 
         private void ApplyEvent(Event @event)
         {
-            this.Version++;
             if (!@event.Volatile)
             {
                 this.ApplyGeneric(@event);
@@ -67,6 +67,7 @@ namespace TheRing.CQRS.Domain
         protected void ApplyChange(Event @event)
         {
             this.ApplyEvent(@event);
+            this.Version++;
             @event.EventSourcedId = this.Id;
             @event.EventSourcedVersion = this.Version;
             @event.TimeStamp = DateTime.UtcNow;

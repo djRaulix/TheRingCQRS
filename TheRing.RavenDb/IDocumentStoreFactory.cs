@@ -3,6 +3,7 @@
     #region using
 
     using System;
+    using System.Collections.Specialized;
 
     using Raven.Client;
 
@@ -13,12 +14,6 @@
         #region Public Methods and Operators
 
         IDocumentStore GetStore(string databaseName);
-
-        void InitStore(
-            string databaseName, 
-            Func<Type, string> findTypeTagName = null, 
-            Func<string, string> findIdentityPropertyNameFromEntityName = null, 
-            Func<string, string> transformTypeTagNameToDocumentKeyPrefix = null);
 
         #endregion
     }

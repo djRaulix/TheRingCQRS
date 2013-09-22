@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{084F829D-9458-486F-A7D7-A75AF9FEA94A}</ProjectGuid>
+    <ProjectGuid>{DD0A6BD3-0BF2-484B-A251-C24393685391}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheRing.CQRS.Domain.UnitTests</RootNamespace>
-    <AssemblyName>TheRing.CQRS.Domain.UnitTests</AssemblyName>
+    <RootNamespace>TheRing.RavenDb.Test</RootNamespace>
+    <AssemblyName>TheRing.RavenDb.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -32,17 +32,40 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FakeItEasy">
-      <HintPath>..\packages\FakeItEasy.1.13.1\lib\net40\FakeItEasy.dll</HintPath>
+    <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions">
-      <HintPath>..\packages\FluentAssertions.2.1.0.0\lib\net45\FluentAssertions.dll</HintPath>
+    <Reference Include="Microsoft.Data.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Configuration">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage">
+      <HintPath>..\packages\WindowsAzure.Storage.2.0.6.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Abstractions">
+      <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Embedded">
+      <HintPath>..\packages\RavenDB.Embedded.2.5.2700\lib\net45\Raven.Client.Embedded.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight">
+      <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Client.Lightweight.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Database">
+      <HintPath>..\packages\RavenDB.Database.2.5.2700\lib\net45\Raven.Database.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,36 +73,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fakes\FakeAggregate.cs" />
-    <Compile Include="Fakes\FakeVolatileEvent.cs" />
-    <Compile Include="Fakes\FakeNonVolatileEvent.cs" />
-    <Compile Include="WhenUsingAggregateRoot\AndCreatingANewEvent.cs" />
-    <Compile Include="WhenUsingAggregateRoot\AndLoadingANonVolatileEvent.cs" />
-    <Compile Include="WhenUsingAggregateRoot\AndLoadingAVolatileEvent.cs" />
-    <Compile Include="WhenUsingAggregateRoot\AndLoadingEvents.cs" />
-    <Compile Include="WhenUsingAggregateRoot\WhenUsingAggregateRoot.cs" />
-    <Compile Include="WhenUsingTheRepository\AndAskingANewAggregate.cs" />
-    <Compile Include="WhenUsingTheRepository\AndAskingAnExistingAggregate.cs" />
-    <Compile Include="WhenUsingTheRepository\AndAskingAnUnKnownAggregate.cs" />
-    <Compile Include="WhenUsingTheRepository\AndAskingAnExpectedOldVersionOfAggregate.cs" />
-    <Compile Include="WhenUsingTheRepository\AndAskingAnExpectedUpToDateVersionOfAggregate.cs" />
-    <Compile Include="WhenUsingTheRepository\AndSavingAggregate.cs" />
-    <Compile Include="WhenUsingTheRepository\WhenUsingTheRepository.cs" />
+    <Compile Include="CreateInMemoryStoreStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Specification.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj">
-      <Project>{F63A407A-4EB7-4223-8730-B44E504476CF}</Project>
-      <Name>TheRing.CQRS.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
-      <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>
-      <Name>TheRing.CQRS.Eventing</Name>
+    <ProjectReference Include="..\TheRing.RavenDb\TheRing.RavenDb.csproj">
+      <Project>{408CD0DE-26DF-4949-A970-EA7B16669D6F}</Project>
+      <Name>TheRing.RavenDb</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.Test\TheRing.Test.csproj">
       <Project>{C53B5138-1B0A-438A-9439-3A0E6E7AA329}</Project>
@@ -87,7 +90,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

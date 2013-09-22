@@ -46,7 +46,7 @@
         protected override void Establish_context()
         {
             base.Establish_context();
-            this.EventStore.CallsTo(s => s.GetEvents(this.Id)).Returns(new List<Event> { A.Fake<Event>() });
+            this.EventStore.CallsTo(s => s.GetEvents(this.Id)).Returns(new List<Event> { new FakeVolatileEvent(){EventSourcedVersion = 1} });
         }
 
         #endregion

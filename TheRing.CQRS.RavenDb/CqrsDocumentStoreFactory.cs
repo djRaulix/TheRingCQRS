@@ -20,15 +20,30 @@
         #region Constructors and Destructors
 
         public CqrsDocumentStoreFactory(
-            IDocumentStoreFactory documentStoreFactory, 
+            IAddDocumenStoreFromParameters storeAdder,
+            IDocumentStoreFactory documentStoreFactory,
             ICqrsDocumentStoreFactoryInitializer initializer)
         {
             this.documentStoreFactory = documentStoreFactory;
-            documentStoreFactory.InitStore("EventStore", type => typeof(Event).Name, null, s => null);
+            storeAdder.AddStore(
+                new DocumentStoreParameters
+                {
+                    DatabaseName = "EventStore",
+                    FindTypeTagName = type => typeof(Event).Name,
+                    TransformTypeTagNameToDocumentKeyPrefix = s => null
+                });
 
-            documentStoreFactory.InitStore("ReadModel", null, n => n + "Id");
+            storeAdder.AddStore(new DocumentStoreParameters
+                {
+                    DatabaseName = "ReadModel",
+                    FindIdentityPropertyNameFromEntityName = n => n + "Id",
+                });
 
-            documentStoreFactory.InitStore("SagaStore");
+            storeAdder.AddStore(new DocumentStoreParameters
+                {
+                    DatabaseName = "SagaStore",
+                    FindIdentityPropertyNameFromEntityName = n => n + "Id",
+                });
 
             initializer.SetDocumentStoreFactory(this);
             initializer.Initialize();
@@ -40,17 +55,26 @@
 
         public IDocumentStore EventStore
         {
-            get { return this.documentStoreFactory.GetStore("EventStore"); }
+            get
+            {
+                return this.documentStoreFactory.GetStore("EventStore");
+            }
         }
 
         public IDocumentStore ReadModel
         {
-            get { return this.documentStoreFactory.GetStore("ReadModel"); }
+            get
+            {
+                return this.documentStoreFactory.GetStore("ReadModel");
+            }
         }
 
         public IDocumentStore SagaStore
         {
-            get { return this.documentStoreFactory.GetStore("SagaStore"); }
+            get
+            {
+                return this.documentStoreFactory.GetStore("SagaStore");
+            }
         }
 
         #endregion
