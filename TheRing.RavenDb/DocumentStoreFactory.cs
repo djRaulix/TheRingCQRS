@@ -33,11 +33,6 @@
             this.createStrategy = createStrategy;
         }
 
-        public DocumentStoreFactory()
-            : this(new CreateStoreStrategy())
-        {
-        }
-
         #endregion
 
         #region Public Methods and Operators
@@ -68,11 +63,11 @@
         {
             var documentConvention = new DocumentConvention
             {
-                JsonContractResolver = new PropertiesOnlyContractResolver(),
-                FindTypeTagName = parameters.FindTypeTagName ?? (t => t.Name),
+                JsonContractResolver = new PropertiesOnlyContractResolver(), 
+                FindTypeTagName = parameters.FindTypeTagName ?? (t => t.Name), 
                 FindIdentityPropertyNameFromEntityName =
-                    parameters.FindIdentityPropertyNameFromEntityName ?? (entityName => "Id"),
-                CustomizeJsonSerializer = serializer => serializer.TypeNameHandling = TypeNameHandling.All,
+                    parameters.FindIdentityPropertyNameFromEntityName ?? (entityName => "Id"), 
+                CustomizeJsonSerializer = serializer => serializer.TypeNameHandling = TypeNameHandling.All, 
                 TransformTypeTagNameToDocumentKeyPrefix = parameters.TransformTypeTagNameToDocumentKeyPrefix ?? (s => s)
             };
             documentConvention.DocumentKeyGenerator = (dbName, databaseCommands, entity) =>
@@ -98,8 +93,8 @@
             };
 
             var store = this.createStrategy.New(
-                documentConvention,
-                parameters.DatabaseName,
+                documentConvention, 
+                parameters.DatabaseName, 
                 parameters.ConnectionStringName ?? ConnectionStringName);
 
             store.Initialize();
