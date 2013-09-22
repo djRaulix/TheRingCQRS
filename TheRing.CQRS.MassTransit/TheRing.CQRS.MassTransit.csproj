@@ -53,6 +53,9 @@
       <HintPath>..\packages\MassTransit.RabbitMQ.2.8.0\lib\net40\MassTransit.Transports.RabbitMq.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="RabbitMQ.Client">
+      <HintPath>..\packages\RabbitMQ.Client.3.1.5\lib\net30\RabbitMQ.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
