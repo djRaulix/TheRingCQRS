@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -83,10 +83,12 @@
     <ProjectReference Include="..\TheRing.RavenDb\TheRing.RavenDb.csproj">
       <Project>{408CD0DE-26DF-4949-A970-EA7B16669D6F}</Project>
       <Name>TheRing.RavenDb</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.Test\TheRing.Test.csproj">
       <Project>{C53B5138-1B0A-438A-9439-3A0E6E7AA329}</Project>
       <Name>TheRing.Test</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

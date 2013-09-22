@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -76,14 +76,17 @@
     <ProjectReference Include="..\TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj">
       <Project>{F63A407A-4EB7-4223-8730-B44E504476CF}</Project>
       <Name>TheRing.CQRS.Domain</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
       <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>
       <Name>TheRing.CQRS.Eventing</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.Test\TheRing.Test.csproj">
       <Project>{C53B5138-1B0A-438A-9439-3A0E6E7AA329}</Project>
       <Name>TheRing.Test</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
