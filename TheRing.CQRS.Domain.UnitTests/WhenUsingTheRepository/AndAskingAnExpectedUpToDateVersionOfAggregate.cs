@@ -33,7 +33,7 @@
         #region Public Methods and Operators
 
         [Test]
-        public void TheAggregateShouldBeReturned()
+        public void ThenTheAggregateShouldBeReturned()
         {
             this.expectedAggregateRoot.Should().BeSameAs(this.AggregateRoot);
             this.Id.Should().Be(this.expectedAggregateRoot.Id);
