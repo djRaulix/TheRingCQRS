@@ -10,7 +10,7 @@
 
     #endregion
 
-    public class CreateInMemoryStoreStrategy : ICreateStoreStrategy
+    public class  CreateInMemoryStoreStrategy : ICreateStoreStrategy
     {
         #region Public Methods and Operators
 
@@ -20,7 +20,7 @@
             {
                 RunInMemory = true,
                 Conventions = conventions,
-                DefaultDatabase = defaultDatabase
+
             };
         }
 

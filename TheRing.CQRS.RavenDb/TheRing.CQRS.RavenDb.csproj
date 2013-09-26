@@ -32,9 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DenormalizerRepository.cs" />
+    <Compile Include="AbstractDocumentStoreFactoryInitializer.cs" />
+    <Compile Include="AbstractDenormalizerRepository.cs" />
     <Compile Include="CqrsDocumentStoreFactory.cs" />
+    <Compile Include="DenormalizerRepository.cs" />
     <Compile Include="EventStore.cs" />
+    <Compile Include="Event_EventSourcedIdAndVersion.cs" />
     <Compile Include="ICqrsDocumentStoreFactory.cs" />
     <Compile Include="ICqrsDocumentStoreFactoryInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,6 +54,8 @@
     <Reference Include="Raven.Client.Lightweight">
       <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -13,6 +13,8 @@
 
         IEnumerable<Event> GetEvents(Guid id, int fromVersion, int toVersion);
 
+        IEnumerable<Event> GetEvents(Guid id, int fromVersion);
+
         IEnumerable<Event> GetEvents(Guid id);
 
         void SaveEvents(IEnumerable<Event> events);

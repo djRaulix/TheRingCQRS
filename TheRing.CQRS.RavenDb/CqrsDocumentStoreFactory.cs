@@ -2,7 +2,10 @@
 {
     #region using
 
+    using System.ComponentModel.Composition.Hosting;
+
     using Raven.Client;
+    using Raven.Client.Indexes;
 
     using TheRing.CQRS.Eventing;
     using TheRing.RavenDb;
@@ -32,6 +35,8 @@
                     FindTypeTagName = type => typeof(Event).Name,
                     TransformTypeTagNameToDocumentKeyPrefix = s => null
                 });
+
+            IndexCreation.CreateIndexes(typeof(Event_EventSourcedIdAndVersion).Assembly, EventStore);
 
             storeAdder.AddStore(new DocumentStoreParameters
                 {

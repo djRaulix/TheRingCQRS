@@ -44,28 +44,42 @@
                 return
                     session.Advanced.LoadStartingWith<Event>(
                         string.Concat(
-                            id, 
+                            id,
                             this.documentStore.Conventions.IdentityPartsSeparator));
             }
         }
 
+        public IEnumerable<Event> GetEvents(Guid id, int fromVersion)
+        {
+            return this.GetEvents(id, fromVersion, int.MaxValue);
+        }
+
         public IEnumerable<Event> GetEvents(Guid id, int fromVersion, int toVersion)
         {
+            if (fromVersion == 0 && toVersion == int.MaxValue)
+            {
+                return this.GetEvents(id);
+            }
+
             using (var session = this.documentStore.OpenSession())
             {
                 var query =
-                    session.Query<Event>().Where(e => e.EventSourcedId == id).Customize(x => x.WaitForNonStaleResults());
+                    session.Query<Event, Event_EventSourcedIdAndVersion>()
+                        .Where(e => e.EventSourcedId == id)
+                        .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite());
                 if (fromVersion > 0)
                 {
-                    query = query.Where(m => m.EventSourcedVersion > fromVersion - 1);
+                    fromVersion--;
+                    query = query.Where(m => m.EventSourcedVersion > fromVersion);
                 }
 
                 if (toVersion < int.MaxValue)
                 {
-                    query = query.Where(m => m.EventSourcedVersion < toVersion + 1);
+                    toVersion++;
+                    query = query.Where(m => m.EventSourcedVersion < toVersion);
                 }
 
-                return session.Advanced.Stream(query.OrderBy(e => e.EventSourcedVersion)).ToList();
+                return session.Advanced.Stream(query).ToList();
             }
         }
 
@@ -80,8 +94,8 @@
                 foreach (var uncommittedEvent in events)
                 {
                     var id = string.Concat(
-                        uncommittedEvent.EventSourcedId, 
-                        this.documentStore.Conventions.IdentityPartsSeparator, 
+                        uncommittedEvent.EventSourcedId,
+                        this.documentStore.Conventions.IdentityPartsSeparator,
                         uncommittedEvent.EventSourcedVersion);
 
                     session.Store(uncommittedEvent, id);
