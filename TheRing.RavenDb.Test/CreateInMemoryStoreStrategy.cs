@@ -16,11 +16,10 @@
 
         public IDocumentStore New(DocumentConvention conventions, string defaultDatabase, string connectionStringName)
         {
-            return new DocumentStore()
+            return new EmbeddableDocumentStore()
             {
+                RunInMemory = true,
                 Conventions = conventions,
-                DefaultDatabase = defaultDatabase,
-                Url = "http://localhost:8080"
 
             };
         }
