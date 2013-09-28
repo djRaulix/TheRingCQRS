@@ -32,6 +32,7 @@
         private IEnumerable<Event> filteredEvents;
         private IEnumerable<Event> filteredMaxEvents;
         private IEnumerable<Event> filteredMinEvents;
+        private IEnumerable<Event> allEvents;
         private Guid id;
 
         #endregion
@@ -71,6 +72,16 @@
             }
         }
 
+        [Test]
+        public void ThenShouldReturnAllEventsFromGuid()
+        {
+            this.allEvents.Count().Should().Be(10);
+            foreach (var item in this.allEvents)
+            {
+                this.storedEvents.Any(e => e.EventSourcedId == item.EventSourcedId).Should().BeTrue();
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -81,6 +92,7 @@
             this.filteredEvents = this.EventStore.GetEvents(this.id, Min, Max).ToList();
             this.filteredMinEvents = this.EventStore.GetEvents(this.id, Min).ToList();
             this.filteredMaxEvents = this.EventStore.GetEvents(this.id, 0, Max).ToList();
+            this.allEvents = this.EventStore.GetEvents(this.id, 0).ToList();
         }
 
         protected override void Establish_context()

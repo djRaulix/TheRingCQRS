@@ -3,15 +3,19 @@
     #region using
 
     using System;
+    using System.Linq;
     using System.Linq.Expressions;
 
+    using Magnum.Linq;
     using Magnum.Reflection;
 
-    using Raven.Abstractions.Commands;
+    using Raven.Abstractions.Data;
     using Raven.Client;
     using Raven.Client.Linq;
+    using Raven.Json.Linq;
 
     using TheRing.CQRS.Eventing;
+    using TheRing.RavenDb;
 
     #endregion
 
@@ -48,37 +52,27 @@
             }
         }
 
-        public void Delete<T>(object id) where T : new()
+        public void Delete<T>(ValueType id) where T : new()
         {
-            using (var session = this.DocumentStore.OpenSession())
-            {
-                session.Advanced.Defer(
-                    new DeleteCommandData
-                    {
-                        Key = string.Format("{0}/{1}", this.DocumentStore.Conventions.FindTypeTagName(typeof(T)), id)
-                    });
-                session.SaveChanges();
-            }
+            Delete<T>(id.ToString());
         }
 
-        public void Delete<T>(Expression<Func<T, bool>> filter) where T : new()
+        public void Delete<T>(string id) where T : new()
         {
-            using (var session = this.DocumentStore.OpenSession())
-            {
-                var toDelete = session.Query<T>().Where(filter).Customize(q => q.WaitForNonStaleResults());
-                foreach (var item in toDelete)
-                {
-                    session.Delete(item);
-                }
-                session.SaveChanges();
-            }
+            this.DocumentStore.DatabaseCommands.Delete(
+                string.Concat(
+                    this.DocumentStore.Conventions.FindTypeTagName(typeof(T)),
+                    this.DocumentStore.Conventions.IdentityPartsSeparator,
+                    id),
+                null);
         }
 
-        public void Update<T>(object id, Action<T> update) where T : new()
+        public void Update<T>(ValueType id, Action<T> update) where T : new()
         {
+            
             using (var session = this.DocumentStore.OpenSession())
             {
-                var view = session.Load<T>(id.ToString());
+                var view = session.Load<T>(id);
 
                 update(view);
 
@@ -86,16 +80,17 @@
             }
         }
 
-        public void Update<T>(Expression<Func<T, bool>> filter, Action<T> update) where T : new()
+        public void Update<T>(string id, Action<T> update) where T : new()
         {
             using (var session = this.DocumentStore.OpenSession())
             {
-                var toUpdate = session.Query<T>().Where(filter).Customize(q => q.WaitForNonStaleResults());
+                var view = session.Load<T>(string.Concat(
+                    this.DocumentStore.Conventions.FindTypeTagName(typeof(T)),
+                    this.DocumentStore.Conventions.IdentityPartsSeparator,
+                    id));
 
-                foreach (var item in toUpdate)
-                {
-                    update(item);
-                }
+                update(view);
+
                 session.SaveChanges();
             }
         }

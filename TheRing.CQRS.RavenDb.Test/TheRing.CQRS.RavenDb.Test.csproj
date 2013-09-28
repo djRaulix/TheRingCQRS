@@ -65,14 +65,27 @@
     <Compile Include="Fakes\FakeCqrsDocumentStoreFactoryInitializer.cs" />
     <Compile Include="Fakes\FakeEvent.cs" />
     <Compile Include="Fakes\FakeEventBus.cs" />
+    <Compile Include="Fakes\FakeGuidIdView.cs" />
+    <Compile Include="Fakes\FakeIntIdView.cs" />
+    <Compile Include="Fakes\FakeStringIdView.cs" />
     <Compile Include="GlobalSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Specification.cs" />
     <Compile Include="WhenUsingCqrsDocumentStoreFactory\AndInitializingIt.cs" />
     <Compile Include="WhenUsingCqrsDocumentStoreFactory\WhenUsingCqrsDocumentStoreFactory.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndUpdatingViewFromGuidId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndCreatingNewViewWithStringId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndCreatingNewViewWithIntId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndCreatingNewViewWithGuidId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndUpdatingViewFromStringId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndUpdatingViewFromIntId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndDeletingViewFromGuidId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\AndDeletingViewFromStringId.cs" />
+    <Compile Include="WhenUsingDenormalizerRepository\WhenUsingDenormalizer.Repository.cs" />
     <Compile Include="WhenUsingEventStore\AndQueryingEventsFromGuid.cs" />
     <Compile Include="WhenUsingEventStore\AndQueryingUnknownGuid.cs" />
     <Compile Include="WhenUsingEventStore\AndFilteringEventsFromGuid.cs" />
+    <Compile Include="WhenUsingEventStore\AndSavingEvents.cs" />
     <Compile Include="WhenUsingEventStore\WhenUsingEventStore.cs" />
   </ItemGroup>
   <ItemGroup>

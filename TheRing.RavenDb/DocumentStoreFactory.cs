@@ -77,6 +77,7 @@
                 var idProperty = documentConvention.FindIdentityPropertyNameFromEntityName(typeTagName);
                 var property = entityType.GetProperty(idProperty);
                 var id = property.GetValue(entity);
+
                 var prefix = documentConvention.TransformTypeTagNameToDocumentKeyPrefix(typeTagName);
                 return string.IsNullOrEmpty(prefix)
                     ? id.ToString()

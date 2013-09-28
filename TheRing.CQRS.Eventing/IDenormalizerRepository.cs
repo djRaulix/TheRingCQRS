@@ -13,13 +13,13 @@
 
         void Create<T>(Action<T> initialize) where T : new();
 
-        void Update<T>(object id, Action<T> update) where T : new();
+        void Update<T>(string id, Action<T> update) where T : new();
 
-        void Delete<T>(object id) where T : new();
+        void Delete<T>(string id) where T : new();
 
-        void Update<T>(Expression<Func<T,bool>> filter, Action<T> update) where T : new();
+        void Update<T>(ValueType id, Action<T> update) where T : new();
 
-        void Delete<T>(Expression<Func<T,bool>> filter) where T : new();
+        void Delete<T>(ValueType id) where T : new();
 
         #endregion
     }
