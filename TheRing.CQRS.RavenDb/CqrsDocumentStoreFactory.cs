@@ -25,7 +25,7 @@
         public CqrsDocumentStoreFactory(
             IAddDocumenStoreFromParameters storeAdder,
             IDocumentStoreFactory documentStoreFactory,
-            ICqrsDocumentStoreFactoryInitializer initializer)
+            ICqrsDocumentStoreFactoryInitializer initializer = null)
         {
             this.documentStoreFactory = documentStoreFactory;
             storeAdder.AddStore(
@@ -47,8 +47,13 @@
             storeAdder.AddStore(new DocumentStoreParameters
                 {
                     DatabaseName = "SagaStore",
-                    FindIdentityPropertyNameFromEntityName = n => n + "Id",
+                    FindIdentityPropertyNameFromEntityName = n => "CorrelationId"
                 });
+
+            if (initializer == null)
+            {
+                return;
+            }
 
             initializer.SetDocumentStoreFactory(this);
             initializer.Initialize();

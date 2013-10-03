@@ -22,15 +22,6 @@
             return stats.TotalResults;
         }
 
-        public static T LoadFromPartialStringId<T>(this IDocumentSession session, string id)
-        {
-            return session.Load<T>(
-                session.Advanced.DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(
-                    id, 
-                    typeof(T), 
-                    false));
-        }
-
         public static IEnumerable<T> ToList<T>(this IEnumerator<StreamResult<T>> enumerator)
         {
             while (enumerator.MoveNext())

@@ -15,6 +15,8 @@
     using Raven.Client;
     using Raven.Client.Linq;
 
+    using TheRing.RavenDb;
+
     #endregion
 
     public class SagaRepository<TSaga> : ISagaRepository<TSaga>
@@ -148,10 +150,8 @@
         {
             using (var session = this.documentStore.OpenSession())
             {
-                var result =
-                    session.Query<TSaga>().Customize(c => c.WaitForNonStaleResults()).Select(transformer).ToList();
-
-                return result;
+                var conventions = documentStore.Conventions;
+                return session.Advanced.LoadStartingWith<TSaga>(conventions.FindTypeTagName(typeof(TSaga)) + conventions.IdentityPartsSeparator).Select(transformer);
             }
         }
 
@@ -159,13 +159,19 @@
         {
             using (var session = this.documentStore.OpenSession())
             {
-                var result =
-                    session.Query<TSaga>()
-                        .Where(filter.FilterExpression)
-                        .Customize(c => c.WaitForNonStaleResults())
-                        .ToList();
+                RavenQueryStatistics statistics;
 
-                return result;
+                session.Query<TSaga>()
+                    .Where(filter.FilterExpression).Statistics(out statistics).Take(0).ToList();
+
+                var enumerator = session.Advanced.Stream(
+                    session.Query<TSaga>(statistics.IndexName)
+                        .Where(filter.FilterExpression)
+                        .Customize(c => c.WaitForNonStaleResultsAsOfLastWrite()));
+                while (enumerator.MoveNext())
+                {
+                    yield return enumerator.Current.Document;
+                }
             }
         }
 

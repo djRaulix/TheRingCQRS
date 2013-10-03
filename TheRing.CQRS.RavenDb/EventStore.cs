@@ -58,28 +58,40 @@
         {
             if (fromVersion == 0 && toVersion == int.MaxValue)
             {
-                return this.GetEvents(id);
+                var enumerator = this.GetEvents(id).GetEnumerator();
+
+                while (enumerator.MoveNext())
+                {
+                    yield return enumerator.Current;
+                }
             }
-
-            using (var session = this.documentStore.OpenSession())
+            else
             {
-                var query =
-                    session.Query<Event, Event_EventSourcedIdAndVersion>()
-                        .Where(e => e.EventSourcedId == id)
-                        .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite());
-                if (fromVersion > 0)
+                using (var session = this.documentStore.OpenSession())
                 {
-                    fromVersion--;
-                    query = query.Where(m => m.EventSourcedVersion > fromVersion);
-                }
+                    var query =
+                        session.Query<Event, Event_EventSourcedIdAndVersion>()
+                            .Where(e => e.EventSourcedId == id)
+                            .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite());
+                    if (fromVersion > 0)
+                    {
+                        fromVersion--;
+                        query = query.Where(m => m.EventSourcedVersion > fromVersion);
+                    }
 
-                if (toVersion < int.MaxValue)
-                {
-                    toVersion++;
-                    query = query.Where(m => m.EventSourcedVersion < toVersion);
-                }
+                    if (toVersion < int.MaxValue)
+                    {
+                        toVersion++;
+                        query = query.Where(m => m.EventSourcedVersion < toVersion);
+                    }
 
-                return session.Advanced.Stream(query).ToList();
+                    var enumerator = session.Advanced.Stream(query);
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current.Document;
+                    }
+                }
             }
         }
 
