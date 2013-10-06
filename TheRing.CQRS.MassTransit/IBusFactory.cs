@@ -6,6 +6,7 @@
     using System.Collections.Generic;
 
     using global::MassTransit;
+    using global::MassTransit.BusConfigurators;
 
     #endregion
 
@@ -18,7 +19,8 @@
         IServiceBus Set(
             string queue, 
             IEnumerable<KeyValuePair<Type, Func<object>>> consumers = null, 
-            IEnumerable<Type> sagas = null);
+            IEnumerable<Type> sagas = null,
+            Action<ServiceBusConfigurator> moreConfig = null);
 
         #endregion
     }

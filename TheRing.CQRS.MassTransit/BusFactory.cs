@@ -5,6 +5,8 @@
     using System;
     using System.Collections.Generic;
 
+    using global::MassTransit.BusConfigurators;
+
     using Magnum.Reflection;
 
     using global::MassTransit;
@@ -15,7 +17,6 @@
 
     public class BusFactory : IBusFactory
     {
-        // to reference explicitly rabbitmq
         #region Fields
 
         private readonly IDictionary<string, IServiceBus> buses;
@@ -44,12 +45,15 @@
         public IServiceBus Set(
             string queue, 
             IEnumerable<KeyValuePair<Type, Func<object>>> consumers = null, 
-            IEnumerable<Type> sagas = null)
+            IEnumerable<Type> sagas = null, Action<ServiceBusConfigurator> moreConfig = null)
         {
             var bus = ServiceBusFactory.New(
                 sbc =>
                 {
-                    sbc.UseRabbitMq();
+                    if (moreConfig != null)
+                    {
+                        moreConfig(sbc);
+                    }
 
                     sbc.ReceiveFrom(queue);
 

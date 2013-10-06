@@ -54,7 +54,7 @@
         protected override void Because_of()
         {
             base.Because_of();
-            this.EventStore.SaveEvents(toStoreEvents);
+            this.EventStore.SaveEvents(this.toStoreEvents);
             
             using (var session = EventDocumentStore.OpenSession())
             {

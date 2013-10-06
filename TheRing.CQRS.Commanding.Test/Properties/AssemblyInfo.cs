@@ -1,21 +1,16 @@
-﻿using System.Runtime.CompilerServices;
-
-#region using
-
-using System.Reflection;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
-#endregion
 
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("TheRing.CQRS.Commanding")]
+[assembly: AssemblyTitle("TheRing.CQRS.Commanding.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TheRing.CQRS.Commanding")]
-[assembly: AssemblyCopyright("Copyright ©TheRing  2013")]
+[assembly: AssemblyProduct("TheRing.CQRS.Commanding.Test")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -25,13 +20,15 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("daf9c562-e6c2-44d9-8641-5f96f3081227")]
+[assembly: Guid("c3152d42-17a1-4766-9d30-7780ac2be6ad")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
+//
 //      Version principale
 //      Version secondaire 
 //      Numéro de build
 //      Révision
+//
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
