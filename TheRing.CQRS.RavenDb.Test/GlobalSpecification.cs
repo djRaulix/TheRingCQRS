@@ -2,19 +2,17 @@
 {
     #region using
 
-    using System;
-
     using TheRing.CQRS.RavenDb.Test.Fakes;
     using TheRing.RavenDb;
     using TheRing.RavenDb.Test;
 
     #endregion
 
-    public sealed class GlobalSpecification
+    public static class GlobalSpecification
     {
         #region Static Fields
 
-        private static readonly object LockObject = new Object();
+        private static readonly object LockObject = new object();
         private static ICqrsDocumentStoreFactory cqrsDocumentStoreFactory;
 
         #endregion
@@ -34,12 +32,13 @@
                             var documentStoreFactory = new DocumentStoreFactory(
                                 new CreateInMemoryStoreStrategy());
                             cqrsDocumentStoreFactory = new CqrsDocumentStoreFactory(
-                                documentStoreFactory,
-                                documentStoreFactory,
+                                documentStoreFactory, 
+                                documentStoreFactory, 
                                 new FakeCqrsDocumentStoreFactoryInitializer());
                         }
                     }
                 }
+
                 return cqrsDocumentStoreFactory;
             }
         }

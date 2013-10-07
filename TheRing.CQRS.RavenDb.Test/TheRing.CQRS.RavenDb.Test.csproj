@@ -86,6 +86,7 @@
     <Compile Include="WhenUsingEventStore\AndQueryingUnknownGuid.cs" />
     <Compile Include="WhenUsingEventStore\AndFilteringEventsFromGuid.cs" />
     <Compile Include="WhenUsingEventStore\AndSavingEvents.cs" />
+    <Compile Include="WhenUsingEventStore\AndSavingConcurrencyEvents.cs" />
     <Compile Include="WhenUsingEventStore\WhenUsingEventStore.cs" />
   </ItemGroup>
   <ItemGroup>

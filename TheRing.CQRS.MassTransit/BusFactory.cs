@@ -45,7 +45,8 @@
         public IServiceBus Set(
             string queue, 
             IEnumerable<KeyValuePair<Type, Func<object>>> consumers = null, 
-            IEnumerable<Type> sagas = null, Action<ServiceBusConfigurator> moreConfig = null)
+            IEnumerable<Type> sagas = null, 
+            Action<ServiceBusConfigurator> moreConfig = null)
         {
             var bus = ServiceBusFactory.New(
                 sbc =>

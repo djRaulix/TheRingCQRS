@@ -30,6 +30,7 @@
             {
                 view = session.Load<FakeGuidIdView>(this.id);
             }
+
             view.Should().BeNull();
         }
 
@@ -40,24 +41,20 @@
         protected override void Because_of()
         {
             base.Because_of();
-            
-            this.DenormalizerRepository.Delete<FakeGuidIdView>(id);
-        }
 
-        #region Overrides of WhenUsingDenormalizerRepository
+            this.DenormalizerRepository.Delete<FakeGuidIdView>(this.id);
+        }
 
         protected override void Establish_context()
         {
             base.Establish_context();
             this.id = new Guid();
-            using (var session = ReadModel.OpenSession())
+            using (var session = this.ReadModel.OpenSession())
             {
-                session.Store(new FakeGuidIdView(){FakeGuidIdViewId = id});
+                session.Store(new FakeGuidIdView { FakeGuidIdViewId = this.id });
                 session.SaveChanges();
             }
         }
-
-        #endregion
 
         #endregion
     }

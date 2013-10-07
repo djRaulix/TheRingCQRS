@@ -8,6 +8,8 @@
 
     using global::MassTransit;
 
+    using Magnum.Extensions;
+
     using TheRing.CQRS.Commanding;
 
     #endregion
@@ -18,7 +20,7 @@
 
         private readonly IServiceBus bus;
 
-        private Uri commandUri;
+        private readonly IEndpoint requestEndPoint;
 
         #endregion
 
@@ -27,7 +29,7 @@
         public CommandBus(IServiceBus bus, string requestQueue)
         {
             this.bus = bus;
-            this.commandUri = new Uri(requestQueue);
+            this.requestEndPoint = bus.GetEndpoint(new Uri(requestQueue));
         }
 
         #endregion
@@ -37,7 +39,7 @@
         public void Send<T>(T command, Guid correlationId) where T : class, ICommand, new()
         {
             command.SetCorrelationId(correlationId);
-            this.RequestEndPoint().Send(command);
+            this.requestEndPoint.Send(command);
         }
 
         public void Send<T>(T command) where T : class, ICommand, new()
@@ -61,16 +63,14 @@
             command.ExpectResponse = true;
             var response = RequestResult.Failed;
 
-            this.RequestEndPoint().SendRequest(
+            this.requestEndPoint.SendRequest(
                 command, 
                 this.bus, 
                 c =>
                 {
                     c.Handle<DoneResponse>(h => response = RequestResult.Ok);
                     c.Handle<ConcurrencyExceptionResponse>(h => response = RequestResult.ConcurrencyException);
-
-
-// c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
+                    //c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
                     c.HandleFault(h => response = RequestResult.Failed);
                 });
             return response;
@@ -81,19 +81,9 @@
             return this.SendRequest(command, CombGuid.Generate());
         }
 
-        public void SetRequestQueue(string queue)
-        {
-            this.commandUri = new Uri(queue);
-        }
-
         #endregion
 
         #region Methods
-
-        private IEndpoint RequestEndPoint()
-        {
-            return this.bus.GetEndpoint(this.commandUri);
-        }
 
         #endregion
     }

@@ -2,6 +2,8 @@
 {
     #region using
 
+    using FakeItEasy;
+
     using TheRing.Test;
 
     #endregion
