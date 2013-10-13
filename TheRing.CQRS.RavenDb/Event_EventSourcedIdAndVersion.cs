@@ -17,8 +17,8 @@
 
         public Event_EventSourcedIdAndVersion()
         {
-            this.Map = events => from e in events
-                select new { e.EventSourcedId , e.EventSourcedVersion};
+            this.Map = events => from e in events orderby e.EventSourcedVersion
+                select new { e.EventSourcedId , e.EventSourcedVersion} ;
         }
 
         #endregion

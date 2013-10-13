@@ -39,14 +39,7 @@
 
         public IEnumerable<Event> GetEvents(Guid id)
         {
-            using (var session = this.documentStore.OpenSession())
-            {
-                return
-                    session.Advanced.LoadStartingWith<Event>(
-                        string.Concat(
-                            id,
-                            this.documentStore.Conventions.IdentityPartsSeparator));
-            }
+            return this.GetEvents(id, 0, int.MaxValue);
         }
 
         public IEnumerable<Event> GetEvents(Guid id, int fromVersion)
@@ -56,41 +49,29 @@
 
         public IEnumerable<Event> GetEvents(Guid id, int fromVersion, int toVersion)
         {
-            if (fromVersion == 0 && toVersion == int.MaxValue)
+            using (var session = this.documentStore.OpenSession())
             {
-                var enumerator = this.GetEvents(id).GetEnumerator();
+                var query =
+                    session.Query<Event, Event_EventSourcedIdAndVersion>()
+                        .Where(e => e.EventSourcedId == id)
+                        .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite());
+                if (fromVersion > 0)
+                {
+                    fromVersion--;
+                    query = query.Where(m => m.EventSourcedVersion > fromVersion);
+                }
+
+                if (toVersion < int.MaxValue)
+                {
+                    toVersion++;
+                    query = query.Where(m => m.EventSourcedVersion < toVersion);
+                }
+
+                var enumerator = session.Advanced.Stream(query);
 
                 while (enumerator.MoveNext())
                 {
-                    yield return enumerator.Current;
-                }
-            }
-            else
-            {
-                using (var session = this.documentStore.OpenSession())
-                {
-                    var query =
-                        session.Query<Event, Event_EventSourcedIdAndVersion>()
-                            .Where(e => e.EventSourcedId == id)
-                            .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite());
-                    if (fromVersion > 0)
-                    {
-                        fromVersion--;
-                        query = query.Where(m => m.EventSourcedVersion > fromVersion);
-                    }
-
-                    if (toVersion < int.MaxValue)
-                    {
-                        toVersion++;
-                        query = query.Where(m => m.EventSourcedVersion < toVersion);
-                    }
-
-                    var enumerator = session.Advanced.Stream(query);
-
-                    while (enumerator.MoveNext())
-                    {
-                        yield return enumerator.Current.Document;
-                    }
+                    yield return enumerator.Current.Document;
                 }
             }
         }
