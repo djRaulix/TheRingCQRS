@@ -25,7 +25,7 @@ namespace TheRing.CQRS.Eventing
 
         public virtual bool Volatile
         {
-            get { return true; }
+            get { return false; }
         }
 
         #endregion
