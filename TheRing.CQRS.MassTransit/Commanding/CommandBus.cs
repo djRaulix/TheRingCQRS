@@ -70,7 +70,7 @@
                 {
                     c.Handle<DoneResponse>(h => response = RequestResult.Ok);
                     c.Handle<ConcurrencyExceptionResponse>(h => response = RequestResult.ConcurrencyException);
-                    //c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
+                    c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
                     c.HandleFault(h => response = RequestResult.Failed);
                 });
             return response;

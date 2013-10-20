@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     using Raven.Client;
 
@@ -12,7 +13,7 @@
 
     #endregion
 
-    public class UserRepository : ReadModelRepository
+    public class UserRepository : ReadModelRepository, IUserRepository
     {
         #region Constructors and Destructors
 
@@ -24,19 +25,35 @@
 
         #region Public Methods and Operators
 
-        public IEnumerable<UserIdentity> GetUserIdentities(int page, int nbByPage, out int totalNb)
+        public IEnumerable<UserIdentity> GetUserIdentities(
+            int page, 
+            int nbByPage, 
+            out int totalNb, 
+            Expression<Func<UserIdentity, object>> orderByProperty = null, 
+            bool asc = true)
         {
             using (var session = this.DocumentStore.OpenSession())
             {
                 RavenQueryStatistics stats;
-                var results = session.Query<UserView>()
+                var result = session.Query<UserView>()
                     .Statistics(out stats)
-                    .TransformWith<UserIdentityTransformer,UserIdentity>()
+                    .TransformWith<UserIdentityTransformer, UserIdentity>();
+
+                IOrderedQueryable<UserIdentity> orderedResult;
+
+                if (orderByProperty == null)
+                {
+                    orderByProperty = u => u.LastName;
+                }
+
+                orderedResult = asc ? result.OrderBy(orderByProperty) : result.OrderByDescending(orderByProperty);
+
+                var pagedResult = orderedResult
                     .Skip((page - 1) * nbByPage)
-                    .Take(nbByPage) 
+                    .Take(nbByPage)
                     .ToList();
                 totalNb = stats.TotalResults;
-                return results;
+                return pagedResult;
             }
         }
 

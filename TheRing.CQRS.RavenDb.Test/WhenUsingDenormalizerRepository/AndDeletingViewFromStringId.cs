@@ -9,6 +9,7 @@
     using NUnit.Framework;
 
     using TheRing.CQRS.RavenDb.Test.Fakes;
+    using TheRing.RavenDb;
 
     #endregion
 
@@ -28,7 +29,7 @@
             FakeStringIdView view;
             using (var session = this.ReadModel.OpenSession())
             {
-                view = session.Load<FakeStringIdView>(this.id);
+                view = session.LoadFromNonPrefixedStringId<FakeStringIdView>(this.id);
             }
             view.Should().BeNull();
         }

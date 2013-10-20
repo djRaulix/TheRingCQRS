@@ -30,6 +30,15 @@
             }
         }
 
+        public static T LoadFromNonPrefixedStringId<T>(this IDocumentSession session, string id)
+        {
+            return session.Load<T>(
+                session.Advanced.DocumentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(
+                    id,
+                    typeof(T),
+                    false));
+        }
+
         #endregion
     }
 }

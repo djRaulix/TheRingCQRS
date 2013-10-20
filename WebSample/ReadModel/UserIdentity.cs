@@ -1,8 +1,5 @@
 ﻿namespace WebSample.ReadModel
 {
-    
-
-
     #region using
 
     using System;
@@ -13,11 +10,11 @@
     {
         #region Public Properties
 
-        public Guid UserId { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+
+        public Guid UserId { get; set; }
 
         #endregion
     }
