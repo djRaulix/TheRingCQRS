@@ -1,9 +1,11 @@
 ﻿@model WebSample.Commanding.AddUserAddressCommand
-@using (Html.BeginForm()) {
+@using (Html.BeginForm("AddAddress","User")) {
 
     <fieldset>
         <legend>add address</legend>
-
+        @Html.HiddenFor(model => model.Id)
+        @Html.LabelFor(model => model.Address)
+        @Html.TextBoxFor(model => model.Address)
         <p>
             <input type="submit" value="AddAddress" />
         </p>

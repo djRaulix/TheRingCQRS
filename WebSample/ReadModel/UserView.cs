@@ -10,7 +10,9 @@
             Addresses = new List<string>();
         }
 
-        public Guid UserId { get; set; }
+        public Guid UserViewId { get; set; }
+
+        public bool CanAddAddress { get; set; }
 
         public int UserVersion { get; set; }
         

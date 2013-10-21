@@ -22,6 +22,8 @@
             }
         }
 
+        public bool CanAddAddress { get; set; }
+
         #endregion
     }
 }

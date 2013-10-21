@@ -1,8 +1,12 @@
 ﻿@model WebSample.Commanding.CreateUserCommand
-@using (Html.BeginForm()) {
-
+@using (Html.BeginForm("Create","User")) {
     <fieldset>
-        <legend>add address</legend>
+        <legend>New User</legend>
+        @Html.LabelFor(model => model.FirstName)
+        @Html.TextBoxFor( model => model.FirstName)
+        <br />
+        @Html.LabelFor(model => model.LastName)
+        @Html.TextBoxFor( model => model.LastName)
         <p>
             <input type="submit" value="Create" />
         </p>

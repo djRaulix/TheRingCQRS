@@ -32,7 +32,8 @@
                 this.ApplyChange(
                     new UserAddressAdded
                     {
-                        Address = address
+                        Address = address,
+                        CanAddAddress = this.nbAddresses < maxAddresses - 1
                     });
             }
         }
@@ -48,7 +49,8 @@
                 new UserCreated
                 {
                     FirstName = firstName,
-                    LastName = lastName
+                    LastName = lastName,
+                    CanAddAddress = true
                 });
         }
 

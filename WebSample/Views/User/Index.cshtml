@@ -1,4 +1,5 @@
-﻿@model IEnumerable<WebSample.ReadModel.UserIdentity>
+﻿@using WebSample.Commanding
+@model IEnumerable<WebSample.ReadModel.UserIdentity>
 
 @{
     Layout = null;
@@ -13,7 +14,7 @@
 </head>
 <body>
     <p>
-        @Html.ActionLink("Create New", "Create")
+        @Html.Partial("Create", new CreateUserCommand())
     </p>
     <table>
         <tr>
@@ -27,7 +28,7 @@
             <td>@item.FirstName</td>
             <td>@item.LastName</td>
             <td>
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Details", "Details", new { Id=item.UserIdentityId })
             </td>
         </tr>
     }

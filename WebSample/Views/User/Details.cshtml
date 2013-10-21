@@ -14,9 +14,19 @@
 </head>
 <body>
     <fieldset>
-        <legend>AbstractAuthenticator</legend>
+        <legend>User Details</legend>
+        First name : @Model.FirstName<br/>
+        last name : @Model.LastName<br/>
+        Addresses : <br/>
+        @foreach (var item in Model.Addresses) {
+            @item<br/>
+        }
     </fieldset>
-    @Html.Partial("AddAddress", new AddUserAddressCommand{Id = @Model.UserId})
+    @if (Model.CanAddAddress)
+    {
+        @Html.Partial("AddAddress", new AddUserAddressCommand{Id = @Model.UserViewId})
+    }
+    
     <p>
         @Html.ActionLink("Back to List", "Index")
     </p>

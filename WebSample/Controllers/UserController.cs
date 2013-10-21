@@ -4,6 +4,7 @@
 
     using System;
     using System.Web.Mvc;
+    using System.Web.Routing;
 
     using TheRing.CQRS.Commanding;
 
@@ -36,15 +37,22 @@
         [HttpPost]
         public ActionResult AddAddress(AddUserAddressCommand command)
         {
-            this.commandBus.Send(command);
-            return this.RedirectToAction("Details");
+            if(this.commandBus.SendOk(command))
+            {
+                return this.RedirectToAction("Details", new {command.Id});
+            }
+            throw new Exception("Error creating address");
+            
         }
 
         [HttpPost]
         public ActionResult Create(CreateUserCommand command)
         {
-            this.commandBus.Send(command);
-            return this.RedirectToAction("Index");
+            if (this.commandBus.SendOk(command))
+            {
+                return this.RedirectToAction("Index");
+            }
+            throw new Exception("Error creating user");
         }
 
         public ActionResult Details(Guid id)
