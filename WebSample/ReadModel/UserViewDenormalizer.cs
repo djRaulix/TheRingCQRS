@@ -25,10 +25,11 @@
             Repository.Create<UserView>(
                 u =>
                 {
-                    u.UserId = @event.EventSourcedId;
+                    u.UserViewId = @event.EventSourcedId;
                     u.UserVersion = @event.EventSourcedVersion;
                     u.FirstName = @event.FirstName;
                     u.LastName = @event.LastName;
+                    u.CanAddAddress = @event.CanAddAddress;
                 });
         }
 
@@ -39,6 +40,7 @@
                 {
                     u.Addresses.Add(@event.Address);
                     u.UserVersion = @event.EventSourcedVersion;
+                    u.CanAddAddress = @event.CanAddAddress;
                 });
         }
 

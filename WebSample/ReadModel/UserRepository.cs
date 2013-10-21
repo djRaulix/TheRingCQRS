@@ -36,6 +36,7 @@
             {
                 RavenQueryStatistics stats;
                 var result = session.Query<UserView>()
+                    .Customize(c => c.WaitForNonStaleResultsAsOfLastWrite())
                     .Statistics(out stats)
                     .TransformWith<UserIdentityTransformer, UserIdentity>();
 

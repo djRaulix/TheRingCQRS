@@ -17,7 +17,7 @@
             this.TransformResults = users => from user in users
                 select new
                 {
-                    user.UserId,
+                    UserIdentityId = user.UserViewId,
                     user.FirstName,
                     user.LastName
                 };

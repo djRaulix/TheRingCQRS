@@ -8,6 +8,8 @@
 
         public string Address { get; set; }
 
+        public bool CanAddAddress { get; set; }
+
         #endregion
     }
 }
