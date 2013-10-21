@@ -113,13 +113,7 @@ namespace WebSample.App_Start
                         return container.GetInstance<ICqrsDocumentStoreFactory>().SagaStore;
                     }
 
-                    if (context.ImplementationType == typeof(DenormalizerRepository) ||
-                        typeof(ReadModelRepository).IsAssignableFrom(context.ImplementationType))
-                    {
-                        return container.GetInstance<ICqrsDocumentStoreFactory>().ReadModel;
-                    }
-
-                    throw new Exception("no document store configured for this implementation");
+                    return container.GetInstance<ICqrsDocumentStoreFactory>().ReadModel;
                 });
 
             container.RegisterSingle<IUserRepository, UserRepository>();

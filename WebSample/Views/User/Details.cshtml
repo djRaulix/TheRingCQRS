@@ -1,4 +1,4 @@
-﻿@using WebSample.Model.User
+﻿@using WebSample.Commanding
 @model WebSample.ReadModel.UserView
 
 @{
@@ -16,7 +16,7 @@
     <fieldset>
         <legend>AbstractAuthenticator</legend>
     </fieldset>
-    @Html.Partial("AddAddress", new AddressDto{Id = @Model.UserId})
+    @Html.Partial("AddAddress", new AddUserAddressCommand{Id = @Model.UserId})
     <p>
         @Html.ActionLink("Back to List", "Index")
     </p>
