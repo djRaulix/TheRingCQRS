@@ -20,11 +20,15 @@
             Define(
                 () =>
                 {
-                    Correlate(UserCreated, e => e.EventSourcedId);
-                    Correlate(UserConfirmed, e => e.CorrelationId);
+                    Correlate(UserCreated).By((saga, message) => saga.CorrelationId == message.EventSourcedId);
+                    Correlate(UserConfirmed).By((saga, message) => saga.CorrelationId == message.CorrelationId);
                     Initially(
                         When(UserCreated)
-                            .Then((saga, message) => saga.CommandBus.Send(new ConfirmUserCommand(), saga.CorrelationId))
+                            .Then(
+                                (saga, message) =>
+                                    saga.CommandBus.Send(
+                                        new ConfirmUserCommand { Id = saga.CorrelationId }, 
+                                        saga.CorrelationId))
                             .TransitionTo(ConfirmingUser));
                     During(ConfirmingUser, When(UserConfirmed).Complete());
                 });

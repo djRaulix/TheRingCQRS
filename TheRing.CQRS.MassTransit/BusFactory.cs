@@ -4,14 +4,15 @@
 
     using System;
     using System.Collections.Generic;
-
-    using global::MassTransit.BusConfigurators;
-
-    using Magnum.Reflection;
+    using System.Reflection;
 
     using global::MassTransit;
 
+    using global::MassTransit.BusConfigurators;
+
     using global::MassTransit.Saga;
+
+    using global::MassTransit.SubscriptionConfigurators;
 
     #endregion
 
@@ -78,7 +79,12 @@
                             foreach (var saga in sagas)
                             {
                                 var repositoryType = typeof(ISagaRepository<>).MakeGenericType(saga);
-                                c.FastInvoke(new[] { saga }, "Saga", this.container(repositoryType));
+                                var method =
+                                    typeof(BusFactory).GetMethod(
+                                        "SetSaga", 
+                                        BindingFlags.NonPublic | BindingFlags.Instance)
+                                        .MakeGenericMethod(saga);
+                                method.Invoke(this, new object[] { c });
                             }
                         });
                 });
@@ -86,6 +92,15 @@
             this.buses[queue] = bus;
 
             return bus;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void SetSaga<TSaga>(SubscriptionBusServiceConfigurator configurator) where TSaga : class, ISaga
+        {
+            configurator.Saga((ISagaRepository<TSaga>)this.container(typeof(ISagaRepository<TSaga>))).Permanent();
         }
 
         #endregion

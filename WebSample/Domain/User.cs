@@ -38,7 +38,7 @@
             }
         }
 
-        public void Apply(UserAddressAdded @event)
+        private void Apply(UserAddressAdded @event)
         {
             this.nbAddresses++;
         }
@@ -52,6 +52,11 @@
                     LastName = lastName,
                     CanAddAddress = true
                 });
+        }
+
+        public void Confirm()
+        {
+            this.ApplyChange(new UserConfirmed());
         }
 
         #endregion

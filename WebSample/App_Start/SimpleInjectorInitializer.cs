@@ -16,6 +16,7 @@ namespace WebSample.App_Start
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.Remoting.Messaging;
     using System.Web.Mvc;
 
     using Magnum.Extensions;
@@ -58,22 +59,16 @@ namespace WebSample.App_Start
 
             InitializeContainer(container);
 
-            container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
-
-            container.RegisterMvcAttributeFilterProvider();
-
-            container.Verify();
-
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
         }
 
-        public static void LoadMassTransitImplementation(
+        private static void LoadMassTransitImplementation(
             Container container, 
             IEnumerable<KeyValuePair<Type, Func<object>>> commandConsumers, 
-            IEnumerable<KeyValuePair<Type, Func<object>>> publishConsumers, 
-            IEnumerable<Type> sagaConsumers)
+            IEnumerable<KeyValuePair<Type, Func<object>>> publishConsumers)
         {
             var factory = new BusFactory(container.GetInstance);
+            container.RegisterSingle<IBusFactory>(() => factory);
 
             Action<ServiceBusConfigurator> config = sbc => sbc.UseRabbitMq();
 
@@ -83,14 +78,17 @@ namespace WebSample.App_Start
 
             factory.Set(Constants.ReadModelQueue, publishConsumers, moreConfig: config);
 
-            factory.Set(Constants.SagaQueue, sagas: sagaConsumers, moreConfig: config);
-
             container.RegisterSingle(factory.Get(Constants.ReadModelQueue).EventBus());
             container.RegisterSingle(
                 factory.Get(Constants.ResponseQueue).CommandBus(Constants.RequestQueue));
         }
 
-        public static void LoadRavenDbImplementation(Container container)
+        private static void LoadSagas(Container container, IEnumerable<Type> sagaConsumers)
+        {
+            container.GetInstance<IBusFactory>().Set(Constants.SagaQueue, sagas: sagaConsumers, moreConfig: sbc => sbc.UseRabbitMq());
+        }
+
+        private static void LoadRavenDbImplementation(Container container)
         {
             container.RegisterSingle<ICreateStoreStrategy, CreateStoreStrategy>();
             var storeFactoryRegistration =
@@ -109,7 +107,7 @@ namespace WebSample.App_Start
                         return container.GetInstance<ICqrsDocumentStoreFactory>().EventStore;
                     }
 
-                    if (context.ImplementationType == typeof(SagaRepository<>))
+                    if (context.ImplementationType != null && context.ImplementationType.IsGenericType && context.ImplementationType.GetGenericTypeDefinition() == typeof(SagaRepository<>))
                     {
                         return container.GetInstance<ICqrsDocumentStoreFactory>().SagaStore;
                     }
@@ -123,7 +121,7 @@ namespace WebSample.App_Start
             container.RegisterSingleOpenGeneric(typeof(ISagaRepository<>), typeof(SagaRepository<>));
         }
 
-        public static IEnumerable<KeyValuePair<Type, Func<object>>> LoadReadModelLayer(Container container)
+        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadReadModelLayer(Container container)
         {
             var denormalizerType = typeof(IDenormalizeEvent<>);
 
@@ -155,10 +153,10 @@ namespace WebSample.App_Start
             }
         }
 
-        public static IEnumerable<Type> LoadSagaLayer()
+        private static IEnumerable<Type> LoadSagaLayer()
         {
             return from type in typeof(CreateUserSaga).Assembly.GetExportedTypes()
-                   where type.IsClass && !type.IsAbstract && type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(SagaStateMachineBase<>))
+                   where !type.IsAbstract && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(WebSampleSaga<>)
                    select type;
         }
 
@@ -174,9 +172,17 @@ namespace WebSample.App_Start
             var readModelHandlers = LoadReadModelLayer(container).ToList();
             var sagaHandlers = LoadSagaLayer().ToList();
 
-            LoadMassTransitImplementation(container, commandHandlers, readModelHandlers, sagaHandlers);
+            LoadMassTransitImplementation(container, commandHandlers, readModelHandlers);
 
             LoadDomainLayer(container);
+
+             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
+
+            container.RegisterMvcAttributeFilterProvider();
+
+            container.Verify();
+
+            LoadSagas(container, sagaHandlers);
         }
 
         private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadCommandLayer(Container container)

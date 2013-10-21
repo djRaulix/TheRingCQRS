@@ -2,27 +2,30 @@
 {
     #region using
 
-    using System;
-
     using TheRing.CQRS.Eventing;
 
     using WebSample.Eventing;
 
     #endregion
 
-    public class UserViewDenormalizer : Denormalizer, IDenormalizeEvent<UserCreated>,
-        IDenormalizeEvent<UserAddressAdded>,
+    public class UserViewDenormalizer : Denormalizer, 
+        IDenormalizeEvent<UserCreated>, 
+        IDenormalizeEvent<UserAddressAdded>, 
         IDenormalizeEvent<UserConfirmed>
     {
-        #region Public Methods and Operators
+        #region Constructors and Destructors
 
         public UserViewDenormalizer(IDenormalizerRepository repository) : base(repository)
         {
         }
 
+        #endregion
+
+        #region Public Methods and Operators
+
         public void Consume(UserCreated @event)
         {
-            Repository.Create<UserView>(
+            this.Repository.Create<UserView>(
                 u =>
                 {
                     u.UserViewId = @event.EventSourcedId;
@@ -35,7 +38,8 @@
 
         public void Consume(UserAddressAdded @event)
         {
-            Repository.Update<UserView>(@event.EventSourcedId,
+            this.Repository.Update<UserView>(
+                @event.EventSourcedId, 
                 u =>
                 {
                     u.Addresses.Add(@event.Address);
@@ -44,16 +48,14 @@
                 });
         }
 
-        #endregion
-
-        #region Implementation of IDenormalizeEvent<in UserConfirmed>
-
         public void Consume(UserConfirmed @event)
         {
-            Repository.Update<UserView>(@event.EventSourcedId,
+            this.Repository.Update<UserView>(
+                @event.EventSourcedId, 
                 u =>
                 {
                     u.Confirmed = true;
+                    u.UserVersion = @event.EventSourcedVersion;
                 });
         }
 
