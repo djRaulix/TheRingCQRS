@@ -8,7 +8,8 @@
     #endregion
 
     public class UserCommandHandler : IRunCommand<User, CreateUserCommand>,
-        IRunCommand<User, AddUserAddressCommand>
+        IRunCommand<User, AddUserAddressCommand>,
+        IRunCommand<User, ConfirmUserCommand>
     {
         #region Implementation of IRunCommand<in User,in CreateUserCommand>
 
@@ -24,6 +25,15 @@
         public void Run(User aggregateRoot, AddUserAddressCommand command)
         {
             aggregateRoot.AddAddress(command.Address);
+        }
+
+        #endregion
+
+        #region Implementation of IRunCommand<in User,in ConfirmUserCommand>
+
+        public void Run(User aggregateRoot, ConfirmUserCommand command)
+        {
+            aggregateRoot.Confirm();
         }
 
         #endregion

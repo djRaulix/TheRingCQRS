@@ -22,6 +22,8 @@
 
         public string LastName { get; set; }
 
+        public bool Confirmed { get; set; }
+
         #endregion
     }
 }

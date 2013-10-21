@@ -42,6 +42,7 @@ namespace WebSample.App_Start
     using WebSample.Commanding;
     using WebSample.Domain;
     using WebSample.ReadModel;
+    using WebSample.Sagas;
 
     #endregion
 
@@ -156,10 +157,9 @@ namespace WebSample.App_Start
 
         public static IEnumerable<Type> LoadSagaLayer()
         {
-            /*return from type in typeof(CreateUserSaga).Assembly.GetExportedTypes()
+            return from type in typeof(CreateUserSaga).Assembly.GetExportedTypes()
                    where type.IsClass && !type.IsAbstract && type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(SagaStateMachineBase<>))
-                   select type;   */
-            return Enumerable.Empty<Type>();
+                   select type;
         }
 
         #endregion

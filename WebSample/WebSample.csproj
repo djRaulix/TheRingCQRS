@@ -151,11 +151,13 @@
     <Compile Include="App_Start\DependencyContext.cs" />
     <Compile Include="App_Start\SimpleInjectorInitializer.cs" />
     <Compile Include="Commanding\AddUserAddressCommand.cs" />
+    <Compile Include="Commanding\ConfirmUserCommand.cs" />
     <Compile Include="Commanding\CreateUserCommand.cs" />
     <Compile Include="Commanding\UserCommandHandler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Domain\User.cs" />
+    <Compile Include="Eventing\UserConfirmed.cs" />
     <Compile Include="Eventing\UserAddressAdded.cs" />
     <Compile Include="Eventing\UserCreated.cs" />
     <Compile Include="Global.asax.cs">
@@ -168,6 +170,8 @@
     <Compile Include="ReadModel\UserRepository.cs" />
     <Compile Include="ReadModel\UserView.cs" />
     <Compile Include="ReadModel\UserViewDenormalizer.cs" />
+    <Compile Include="Sagas\CreateUserSaga.cs" />
+    <Compile Include="Sagas\WebSampleSaga.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />

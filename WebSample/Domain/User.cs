@@ -37,9 +37,14 @@
             }
         }
 
-        public void Apply(UserAddressAdded @event)
+        private void Apply(UserAddressAdded @event)
         {
             this.nbAddresses++;
+        }
+
+        public void Confirm()
+        {
+            this.ApplyChange(new UserConfirmed());
         }
 
         public void Create(string firstName, string lastName)
@@ -47,7 +52,7 @@
             this.ApplyChange(
                 new UserCreated
                 {
-                    FirstName = firstName,
+                    FirstName = firstName, 
                     LastName = lastName
                 });
         }

@@ -11,7 +11,8 @@
     #endregion
 
     public class UserViewDenormalizer : Denormalizer, IDenormalizeEvent<UserCreated>,
-        IDenormalizeEvent<UserAddressAdded>
+        IDenormalizeEvent<UserAddressAdded>,
+        IDenormalizeEvent<UserConfirmed>
     {
         #region Public Methods and Operators
 
@@ -38,6 +39,19 @@
                 {
                     u.Addresses.Add(@event.Address);
                     u.UserVersion = @event.EventSourcedVersion;
+                });
+        }
+
+        #endregion
+
+        #region Implementation of IDenormalizeEvent<in UserConfirmed>
+
+        public void Consume(UserConfirmed @event)
+        {
+            Repository.Update<UserView>(@event.EventSourcedId,
+                u =>
+                {
+                    u.Confirmed = true;
                 });
         }
 
