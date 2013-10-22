@@ -59,7 +59,14 @@
 
         public void Save(AggregateRoot aggregateRoot)
         {
-            this.store.SaveEvents(aggregateRoot.Changes);
+            try
+            {
+                this.store.SaveEvents(aggregateRoot.Changes);
+            }
+            catch (EventStoreConcurrencyException ex)
+            {
+                throw new DomainConcurrencyException(ex.Message);
+            }
         }
 
         #endregion

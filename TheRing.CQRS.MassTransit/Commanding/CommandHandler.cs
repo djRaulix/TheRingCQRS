@@ -43,7 +43,7 @@ namespace TheRing.CQRS.MassTransit.Commanding
             {
                 agg = this.aggregateEditor.Get(message);
             }
-            catch (ConcurrencyException)
+            catch (DomainConcurrencyException)
             {
                 if (message.ExpectResponse)
                 {
@@ -62,7 +62,7 @@ namespace TheRing.CQRS.MassTransit.Commanding
             {
                 this.aggregateEditor.Save(agg);
             }
-            catch (ConcurrencyException)
+            catch (DomainConcurrencyException)
             {
                 if (context.RetryCount < MaxTries)
                 {

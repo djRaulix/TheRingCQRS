@@ -6,12 +6,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Raven.Abstractions.Exceptions;
     using Raven.Client;
     using Raven.Client.Linq;
 
-    using TheRing.CQRS.Domain;
     using TheRing.CQRS.Eventing;
-    using TheRing.RavenDb;
 
     #endregion
 
@@ -101,7 +100,7 @@
                 catch (ConcurrencyException)
                 {
                     var evnt = events.First();
-                    throw new ConcurrencyException(evnt.EventSourcedId, evnt.EventSourcedVersion);
+                    throw new EventStoreConcurrencyException(evnt.EventSourcedId, evnt.EventSourcedVersion);
                 }
             }
 

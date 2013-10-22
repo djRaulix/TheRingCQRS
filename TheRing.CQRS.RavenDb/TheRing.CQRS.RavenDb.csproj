@@ -61,11 +61,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj">
-      <Project>{f63a407a-4eb7-4223-8730-b44e504476cf}</Project>
-      <Name>TheRing.CQRS.Domain</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
       <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>
       <Name>TheRing.CQRS.Eventing</Name>
