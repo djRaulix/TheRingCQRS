@@ -226,7 +226,7 @@ namespace WebSample.App_Start
                 container.Register(aggregate, aggregate, Lifestyle.Transient);
             }
 
-            container.RegisterSingle<IAggregateRootFactory>(() => new AggregateRootFactory(container));
+            container.RegisterSingle<IAggregateRootFactory>(() => new AggregateRootFactory(container.GetInstance));
 
             container.RegisterSingle<IRepository, Repository>();
         }

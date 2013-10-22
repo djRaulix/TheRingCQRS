@@ -6,15 +6,15 @@ namespace TheRing.CQRS.Domain
     {
         #region Fields
 
-        private readonly IServiceProvider serviceProvider;
+        private readonly Func<Type, object> objectFactory;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public AggregateRootFactory(IServiceProvider serviceProvider)
+        public AggregateRootFactory(Func<Type,object> objectFactory)
         {
-            this.serviceProvider = serviceProvider;
+            this.objectFactory = objectFactory;
         }
 
         #endregion
@@ -23,7 +23,7 @@ namespace TheRing.CQRS.Domain
 
         public T Create<T>() where T : AggregateRoot
         {
-            return (T)this.serviceProvider.GetService(typeof(T));
+            return (T)this.objectFactory(typeof(T));
         }
 
         #endregion
