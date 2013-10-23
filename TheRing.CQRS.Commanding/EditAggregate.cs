@@ -6,18 +6,17 @@ namespace TheRing.CQRS.Commanding
 
     #endregion
 
-    public class EditAggregate<TAgg> : IEditAggregate<TAgg>
-        where TAgg : AggregateRoot
+    public class EditAggregate<TAgg> : IEditAggregate<TAgg> where TAgg : IAggregateRoot
     {
         #region Fields
 
-        private readonly IRepository repository;
+        private readonly IAggregateRootRepository<TAgg> repository;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public EditAggregate(IRepository repository)
+        public EditAggregate(IAggregateRootRepository<TAgg> repository)
         {
             this.repository = repository;
         }
@@ -30,11 +29,11 @@ namespace TheRing.CQRS.Commanding
         {
             var updateCommand = command as UpdateCommand;
             return updateCommand == null
-                ? this.repository.Create<TAgg>(command.Id)
-                : this.repository.Get<TAgg>(command.Id, updateCommand.ExpectedVersion);
+                ? this.repository.Create(command.Id)
+                : this.repository.Get(command.Id, updateCommand.ExpectedVersion);
         }
 
-        public void Save(AggregateRoot aggregateRoot)
+        public void Save(TAgg aggregateRoot)
         {
             this.repository.Save(aggregateRoot);
         }

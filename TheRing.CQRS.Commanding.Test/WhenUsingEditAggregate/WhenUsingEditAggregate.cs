@@ -7,16 +7,16 @@
 
     public abstract class WhenUsingEditAggregate : Specification
     {
-        protected EditAggregate<FakeAggregateRoot>  EditAggregate { get; set; }
+        protected EditAggregate<FakeAggregateRoot> EditAggregate { get; set; }
 
-        protected IRepository Repository { get; set; }
+        protected IAggregateRootRepository<FakeAggregateRoot> Repository { get; set; }
 
         #region Overrides of SpecBase
 
         protected override void Establish_context()
         {
             base.Establish_context();
-            Repository = A.Fake<IRepository>();
+            Repository = A.Fake<IAggregateRootRepository<FakeAggregateRoot>>();
             EditAggregate = new EditAggregate<FakeAggregateRoot>(Repository);
         }
 

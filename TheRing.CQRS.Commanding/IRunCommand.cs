@@ -7,7 +7,6 @@ namespace TheRing.CQRS.Commanding
     #endregion
 
     public interface IRunCommand<in TAgg, in TCommand>
-        where TAgg : AggregateRoot where TCommand : ICommand
     {
         #region Public Methods and Operators
 

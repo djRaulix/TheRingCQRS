@@ -9,7 +9,7 @@
 
     using Raven.Client;
 
-    using TheRing.CQRS.RavenDb;
+    using TheRing.CQRS.Eventing.RavenDb;
 
     #endregion
 
@@ -26,10 +26,10 @@
         #region Public Methods and Operators
 
         public IEnumerable<UserIdentity> GetUserIdentities(
-            int page, 
-            int nbByPage, 
-            out int totalNb, 
-            Expression<Func<UserIdentity, object>> orderByProperty = null, 
+            int page,
+            int nbByPage,
+            out int totalNb,
+            Expression<Func<UserIdentity, object>> orderByProperty = null,
             bool asc = true)
         {
             using (var session = this.DocumentStore.OpenSession())
@@ -50,7 +50,7 @@
                 orderedResult = asc ? result.OrderBy(orderByProperty) : result.OrderByDescending(orderByProperty);
 
                 var pagedResult = orderedResult
-                    .Skip((page - 1) * nbByPage)
+                    .Skip((page - 1)*nbByPage)
                     .Take(nbByPage)
                     .ToList();
                 totalNb = stats.TotalResults;

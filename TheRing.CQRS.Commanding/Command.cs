@@ -23,6 +23,8 @@ namespace TheRing.CQRS.Commanding
 
         public bool ExpectResponse { get; set; }
 
+        public int NbTries { get; set; }
+
         public DateTime TimeStamp { get; private set; }
 
         #endregion

@@ -1,12 +1,16 @@
 namespace WebSample.App_Start
 {
+    #region using
+
     using System.Linq;
 
     using Magnum.Reflection;
 
     using Raven.Client.Indexes;
 
-    using TheRing.CQRS.RavenDb;
+    using TheRing.CQRS.Eventing.RavenDb;
+
+    #endregion
 
     public class CqrsDocumentStoreFactoryInitializer : ICqrsDocumentStoreFactoryInitializer
     {
@@ -46,12 +50,15 @@ namespace WebSample.App_Start
             }*/
 
             var transformers = from @type in this.GetType().Assembly.GetTypes()
-                          where
-                              !@type.IsAbstract &&
-                              typeof(AbstractTransformerCreationTask).IsAssignableFrom(@type)
-                          select @type;
+                where
+                    !@type.IsAbstract &&
+                    typeof(AbstractTransformerCreationTask).IsAssignableFrom(@type)
+                select @type;
 
-            foreach (var task in transformers.Select(transformer => (AbstractTransformerCreationTask)FastActivator.Create(transformer)))
+            foreach (
+                var task in
+                    transformers.Select(
+                        transformer => (AbstractTransformerCreationTask)FastActivator.Create(transformer)))
             {
                 task.Execute(this.factory.ReadModel);
             }

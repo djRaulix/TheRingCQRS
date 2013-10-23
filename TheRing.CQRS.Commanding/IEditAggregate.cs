@@ -6,14 +6,13 @@ namespace TheRing.CQRS.Commanding
 
     #endregion
 
-    public interface IEditAggregate<out TAgg>
-        where TAgg : AggregateRoot
+    public interface IEditAggregate<TAgg> where TAgg : IAggregateRoot
     {
         #region Public Methods and Operators
 
         TAgg Get(ICommand command);
 
-        void Save(AggregateRoot aggregateRoot);
+        void Save(TAgg aggregateRoot);
 
         #endregion
     }

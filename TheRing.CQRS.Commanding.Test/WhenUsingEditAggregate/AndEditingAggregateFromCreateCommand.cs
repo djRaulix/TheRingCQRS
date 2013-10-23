@@ -46,7 +46,7 @@
             base.Establish_context();
             this.createCommand = A.Fake<CreateCommand>();
             this.newAggregate = new FakeAggregateRoot();
-            this.Repository.CallsTo(r => r.Create<FakeAggregateRoot>(this.createCommand.Id)).Returns(this.newAggregate);
+            this.Repository.CallsTo(r => r.Create(this.createCommand.Id)).Returns(this.newAggregate);
         }
 
         #endregion

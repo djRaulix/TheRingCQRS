@@ -32,25 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AggregateRootFactory.cs" />
-    <Compile Include="DomainConcurrencyException.cs" />
-    <Compile Include="AggregateRoot.cs" />
-    <Compile Include="IAggregateRootFactory.cs" />
-    <Compile Include="IRepository.cs" />
-    <Compile Include="NotExpectedVersionDuringLoadException.cs" />
+    <Compile Include="AggregateRootConcurrencyException.cs" />
+    <Compile Include="IAggregateRoot.cs" />
+    <Compile Include="IAggregateRootRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository.cs" />
-    <Compile Include="UnknownAggregateRootException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
-      <Project>{b1b87d37-25cb-4953-97b7-2a7627798d25}</Project>
-      <Name>TheRing.CQRS.Eventing</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

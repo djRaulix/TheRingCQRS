@@ -82,13 +82,13 @@
     <Compile Include="WhenUsingSagaRepository\WhenUsingSagaRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TheRing.CQRS.Eventing.RavenDb\TheRing.CQRS.Eventing.RavenDb.csproj">
+      <Project>{BFFE2398-DF5E-440D-92B6-1B903A533A60}</Project>
+      <Name>TheRing.CQRS.Eventing.RavenDb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
       <Project>{b1b87d37-25cb-4953-97b7-2a7627798d25}</Project>
       <Name>TheRing.CQRS.Eventing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.RavenDb\TheRing.CQRS.RavenDb.csproj">
-      <Project>{BFFE2398-DF5E-440D-92B6-1B903A533A60}</Project>
-      <Name>TheRing.CQRS.RavenDb</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.MassTransit.RavenDb\TheRing.MassTransit.RavenDb.csproj">
       <Project>{225BB9E8-D0E0-4CC9-81E8-08CD8C3CD1EE}</Project>

@@ -1,8 +1,12 @@
 ﻿namespace WebSample.Sagas
 {
+    #region using
+
     using System;
 
-    using TheRing.CQRS.MassTransit;
+    using TheRing.CQRS.Commanding.MassTransit;
+
+    #endregion
 
     public abstract class WebSampleSaga<TSaga> : SagaStateMachineBase<TSaga>
         where TSaga : SagaStateMachineBase<TSaga>
@@ -20,7 +24,10 @@
 
         protected override string RequestQueue
         {
-            get { return Constants.RequestQueue; }
+            get
+            {
+                return Constants.RequestQueue;
+            }
         }
 
         #endregion

@@ -78,7 +78,6 @@
 
                             foreach (var saga in sagas)
                             {
-                                var repositoryType = typeof(ISagaRepository<>).MakeGenericType(saga);
                                 var method =
                                     typeof(BusFactory).GetMethod(
                                         "SetSaga", 

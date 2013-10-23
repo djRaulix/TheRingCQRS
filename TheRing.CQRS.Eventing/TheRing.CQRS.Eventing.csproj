@@ -32,14 +32,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="EventSourced.cs" />
+    <Compile Include="EventSourcedFactory.cs" />
     <Compile Include="EventStoreConcurrencyException.cs" />
     <Compile Include="Denormalizer.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="IDenormalizerRepository.cs" />
     <Compile Include="IDenormalizeEvent.cs" />
     <Compile Include="IEventBus.cs" />
+    <Compile Include="IEventSourcedFactory.cs" />
+    <Compile Include="IEventSourcedRepository.cs" />
     <Compile Include="IEventStore.cs" />
+    <Compile Include="NotExpectedVersionDuringLoadException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EventSourcedRepository.cs" />
+    <Compile Include="UnknownEventSourcedException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

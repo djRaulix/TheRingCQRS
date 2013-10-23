@@ -10,9 +10,8 @@
     using global::MassTransit;
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Eventing.MassTransit;
     using TheRing.CQRS.MassTransit;
-    using TheRing.CQRS.MassTransit.Commanding;
-    using TheRing.CQRS.MassTransit.Querying;
     using TheRing.CQRS.MassTransit.Test.Fakes;
 
     #endregion
@@ -56,11 +55,11 @@
 
                             FakeEventDenormalizer = new FakeEventDenormalizer();
                             busFactory.Set(
-                                EventQueue, 
+                                EventQueue,
                                 new[]
                                 {
                                     new KeyValuePair<Type, Func<object>>(
-                                        typeof(Denormalizer<FakeEventDenormalizer, FakeEvent>), 
+                                        typeof(Denormalizer<FakeEventDenormalizer, FakeEvent>),
                                         () =>
                                             new Denormalizer<FakeEventDenormalizer, FakeEvent>(FakeEventDenormalizer))
                                 });
@@ -70,14 +69,14 @@
                             FakeCommandHandler = new FakeCommandHandler();
 
                             busFactory.Set(
-                                CommandRequestQueue, 
+                                CommandRequestQueue,
                                 new[]
                                 {
                                     new KeyValuePair<Type, Func<object>>(
-                                        typeof(CommandHandler<FakeAggregateRoot, FakeCommand>), 
+                                        typeof(CommandHandler<FakeAggregateRoot, FakeCommand>),
                                         () =>
                                             new CommandHandler<FakeAggregateRoot, FakeCommand>(
-                                                EditAggregate, 
+                                                EditAggregate,
                                                 FakeCommandHandler))
                                 });
 

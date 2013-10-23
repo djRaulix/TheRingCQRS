@@ -6,7 +6,7 @@
 
     using Raven.Client;
 
-    using TheRing.CQRS.RavenDb;
+    using TheRing.CQRS.Eventing.RavenDb;
     using TheRing.RavenDb;
     using TheRing.RavenDb.Test;
 

@@ -16,7 +16,6 @@ namespace WebSample.App_Start
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Runtime.Remoting.Messaging;
     using System.Web.Mvc;
 
     using Magnum.Extensions;
@@ -31,12 +30,13 @@ namespace WebSample.App_Start
     using SimpleInjector.Integration.Web.Mvc;
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding.MassTransit;
     using TheRing.CQRS.Domain;
     using TheRing.CQRS.Eventing;
+    using TheRing.CQRS.Eventing.MassTransit;
+    using TheRing.CQRS.Eventing.RavenDb;
+    using TheRing.CQRS.EventSourcedDomain;
     using TheRing.CQRS.MassTransit;
-    using TheRing.CQRS.MassTransit.Commanding;
-    using TheRing.CQRS.MassTransit.Querying;
-    using TheRing.CQRS.RavenDb;
     using TheRing.MassTransit.RavenDb;
     using TheRing.RavenDb;
 
@@ -62,9 +62,85 @@ namespace WebSample.App_Start
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
         }
 
+        #endregion
+
+        #region Methods
+
+        private static void InitializeContainer(Container container)
+        {
+            LoadRavenDbImplementation(container);
+
+            var commandHandlers = LoadCommandLayer(container).ToList();
+            var readModelHandlers = LoadReadModelLayer(container).ToList();
+            var sagaHandlers = LoadSagaLayer().ToList();
+
+            LoadMassTransitImplementation(container, commandHandlers, readModelHandlers);
+
+            LoadEventSourcedDomainLayer(container);
+
+            container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
+
+            container.RegisterMvcAttributeFilterProvider();
+
+            container.Verify();
+
+            LoadSagas(container, sagaHandlers);
+        }
+
+        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadCommandLayer(Container container)
+        {
+            container.RegisterSingleOpenGeneric(typeof(IEditAggregate<>), typeof(EditAggregate<>));
+            container.RegisterSingleOpenGeneric(typeof(CommandHandler<,>), typeof(CommandHandler<,>));
+            container.RegisterSingleOpenGeneric(typeof(CommandConsumer<>), typeof(CommandConsumer<>));
+
+            var runCommandType = typeof(IRunCommand<,>);
+            var commandRunners = from type in typeof(CreateUserCommand).Assembly.GetExportedTypes()
+                from @interface in
+                    type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == runCommandType)
+                group @interface by type
+                into grp
+                where grp.Any()
+                select new { type = grp.Key, interfaces = grp.ToList() };
+
+            foreach (var runner in commandRunners)
+            {
+                var registration = Lifestyle.Singleton.CreateRegistration(runner.type, runner.type, container);
+
+                foreach (var item in runner.interfaces)
+                {
+                    container.AddRegistration(item, registration);
+                    var args = item.GetGenericArguments();
+                    var commandType = args.Last();
+                    var commandHandlerType = typeof(CommandHandler<,>).MakeGenericType(args);
+                    var handlesCommandType = typeof(IHandlesCommand<>).MakeGenericType(commandType);
+                    container.RegisterSingle(handlesCommandType, () => container.GetInstance(commandHandlerType));
+                    var commandConsumerType = typeof(CommandConsumer<>).MakeGenericType(commandType);
+                    yield return
+                        new KeyValuePair<Type, Func<object>>(
+                            commandConsumerType,
+                            () => container.GetInstance(commandConsumerType));
+                }
+            }
+        }
+
+        private static void LoadEventSourcedDomainLayer(Container container)
+        {
+            var aggregates =
+                typeof(User).Assembly.GetExportedTypes().Where(t => t.Implements<EventSourcedAggregateRoot>()).ToList();
+
+            foreach (var aggregate in aggregates)
+            {
+                container.Register(aggregate, aggregate, Lifestyle.Transient);
+            }
+
+            container.RegisterSingle<IEventSourcedFactory>(() => new EventSourcedFactory(container.GetInstance));
+            container.RegisterSingleOpenGeneric(typeof(IEventSourcedRepository<>),typeof(EventSourcedRepository<>));
+            container.RegisterSingleOpenGeneric(typeof(IAggregateRootRepository<>), typeof(EventSourcedAggregateRootRepository<>));
+        }
+
         private static void LoadMassTransitImplementation(
-            Container container, 
-            IEnumerable<KeyValuePair<Type, Func<object>>> commandConsumers, 
+            Container container,
+            IEnumerable<KeyValuePair<Type, Func<object>>> commandConsumers,
             IEnumerable<KeyValuePair<Type, Func<object>>> publishConsumers)
         {
             var factory = new BusFactory(container.GetInstance);
@@ -81,11 +157,6 @@ namespace WebSample.App_Start
             container.RegisterSingle(factory.Get(Constants.ReadModelQueue).EventBus());
             container.RegisterSingle(
                 factory.Get(Constants.ResponseQueue).CommandBus(Constants.RequestQueue));
-        }
-
-        private static void LoadSagas(Container container, IEnumerable<Type> sagaConsumers)
-        {
-            container.GetInstance<IBusFactory>().Set(Constants.SagaQueue, sagas: sagaConsumers, moreConfig: sbc => sbc.UseRabbitMq());
         }
 
         private static void LoadRavenDbImplementation(Container container)
@@ -107,7 +178,8 @@ namespace WebSample.App_Start
                         return container.GetInstance<ICqrsDocumentStoreFactory>().EventStore;
                     }
 
-                    if (context.ImplementationType != null && context.ImplementationType.IsGenericType && context.ImplementationType.GetGenericTypeDefinition() == typeof(SagaRepository<>))
+                    if (context.ImplementationType != null && context.ImplementationType.IsGenericType &&
+                        context.ImplementationType.GetGenericTypeDefinition() == typeof(SagaRepository<>))
                     {
                         return container.GetInstance<ICqrsDocumentStoreFactory>().SagaStore;
                     }
@@ -138,7 +210,7 @@ namespace WebSample.App_Start
                 var denType = denormalizer.type;
 
                 container.RegisterSingle(
-                    denType, 
+                    denType,
                     () => FastActivator.Create(denType, container.GetInstance<IDenormalizerRepository>()));
 
                 foreach (var @interface in denormalizer.interfaces)
@@ -147,7 +219,7 @@ namespace WebSample.App_Start
                     var wrapper = typeof(Denormalizer<,>).MakeGenericType(denType, eventType);
                     yield return
                         new KeyValuePair<Type, Func<object>>(
-                            wrapper, 
+                            wrapper,
                             () => Activator.CreateInstance(wrapper, container.GetInstance(denType)));
                 }
             }
@@ -156,79 +228,16 @@ namespace WebSample.App_Start
         private static IEnumerable<Type> LoadSagaLayer()
         {
             return from type in typeof(CreateUserSaga).Assembly.GetExportedTypes()
-                   where !type.IsAbstract && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(WebSampleSaga<>)
-                   select type;
+                where
+                    !type.IsAbstract && type.BaseType.IsGenericType &&
+                    type.BaseType.GetGenericTypeDefinition() == typeof(WebSampleSaga<>)
+                select type;
         }
 
-        #endregion
-
-        #region Methods
-
-        private static void InitializeContainer(Container container)
+        private static void LoadSagas(Container container, IEnumerable<Type> sagaConsumers)
         {
-            LoadRavenDbImplementation(container);
-
-            var commandHandlers = LoadCommandLayer(container).ToList();
-            var readModelHandlers = LoadReadModelLayer(container).ToList();
-            var sagaHandlers = LoadSagaLayer().ToList();
-
-            LoadMassTransitImplementation(container, commandHandlers, readModelHandlers);
-
-            LoadDomainLayer(container);
-
-             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
-
-            container.RegisterMvcAttributeFilterProvider();
-
-            container.Verify();
-
-            LoadSagas(container, sagaHandlers);
-        }
-
-        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadCommandLayer(Container container)
-        {
-            container.RegisterSingleOpenGeneric(typeof(IEditAggregate<>), typeof(EditAggregate<>));
-            container.RegisterSingleOpenGeneric(typeof(CommandHandler<,>), typeof(CommandHandler<,>));
-
-            var runCommandType = typeof(IRunCommand<,>);
-            var commandRunners = from type in typeof(CreateUserCommand).Assembly.GetExportedTypes()
-                from @interface in
-                    type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == runCommandType)
-                group @interface by type
-                into grp
-                where grp.Any()
-                select new { type = grp.Key, interfaces = grp.ToList() };
-
-            foreach (var runner in commandRunners)
-            {
-                var registration = Lifestyle.Singleton.CreateRegistration(runner.type, runner.type, container);
-
-                foreach (var item in runner.interfaces)
-                {
-                    container.AddRegistration(item, registration);
-                    var args = item.GetGenericArguments();
-                    var commandHandlerType = typeof(CommandHandler<,>).MakeGenericType(args);
-                    yield return
-                        new KeyValuePair<Type, Func<object>>(
-                            commandHandlerType, 
-                            () => container.GetInstance(commandHandlerType));
-                }
-            }
-        }
-
-        private static void LoadDomainLayer(Container container)
-        {
-            var aggregates =
-                typeof(User).Assembly.GetExportedTypes().Where(t => t.Implements<AggregateRoot>()).ToList();
-
-            foreach (var aggregate in aggregates)
-            {
-                container.Register(aggregate, aggregate, Lifestyle.Transient);
-            }
-
-            container.RegisterSingle<IAggregateRootFactory>(() => new AggregateRootFactory(container.GetInstance));
-
-            container.RegisterSingle<IRepository, Repository>();
+            container.GetInstance<IBusFactory>()
+                .Set(Constants.SagaQueue, sagas: sagaConsumers, moreConfig: sbc => sbc.UseRabbitMq());
         }
 
         #endregion
