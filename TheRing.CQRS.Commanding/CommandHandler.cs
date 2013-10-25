@@ -1,8 +1,7 @@
 ﻿namespace TheRing.CQRS.Commanding
 {
-    #region using
 
-    using TheRing.CQRS.Domain;
+    #region using
 
     #endregion
 
@@ -12,59 +11,58 @@
     {
         #region Fields
 
-        private readonly IEditAggregate<TAgg> aggregateEditor;
-        private readonly IRunCommand<TAgg, TCommand> commandRunner;
+        private readonly IAggregateRootRepository<TAgg> repository;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public CommandHandler(IEditAggregate<TAgg> aggregateEditor, IRunCommand<TAgg, TCommand> commandRunner)
+        public CommandHandler(IAggregateRootRepository<TAgg> repository)
         {
-            this.aggregateEditor = aggregateEditor;
-            this.commandRunner = commandRunner;
+            this.repository = repository;
         }
 
         #endregion
 
         #region Public Methods and Operators
 
-        public void Handles(IConsumesContext<TCommand> consumesContext)
+        public void Handles(IHandlesContext<TCommand> handlesContext)
         {
-            var command = consumesContext.Command;
+            var command = handlesContext.Command;
             TAgg agg;
             try
             {
-                agg = this.aggregateEditor.Get(command);
+                var updateCommand = command as UpdateCommand;
+                agg = updateCommand == null
+                    ? this.repository.Create(command.Id)
+                    : this.repository.Get(command.Id, updateCommand.ExpectedVersion);
             }
             catch (AggregateRootConcurrencyException)
             {
                 if (command.ExpectResponse)
                 {
-                    consumesContext.Respond(new ConcurrencyExceptionResponse());
+                    handlesContext.Respond(new ConcurrencyExceptionResponse());
                     return;
                 }
                 throw;
             }
 
-            agg.SetCurrentCorrelationId(command.CorrelationId);
-
-            this.commandRunner.Run(agg, command);
+            agg.RunGeneric(command);
 
             try
             {
-                this.aggregateEditor.Save(agg);
+                this.repository.Save(agg);
             }
             catch (AggregateRootConcurrencyException)
             {
-                if (consumesContext.RetryLater())
+                if (handlesContext.RetryLater())
                 {
                     return;
                 }
 
                 if (command.ExpectResponse)
                 {
-                    consumesContext.Respond(new ConcurrencyExceptionResponse());
+                    handlesContext.Respond(new ConcurrencyExceptionResponse());
                     return;
                 }
 
@@ -73,7 +71,7 @@
 
             if (command.ExpectResponse)
             {
-                consumesContext.Respond(new DoneResponse());
+                handlesContext.Respond(new DoneResponse());
             }
         }
 

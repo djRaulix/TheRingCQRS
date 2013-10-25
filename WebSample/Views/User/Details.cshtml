@@ -25,7 +25,7 @@
     </fieldset>
     @if (Model.CanAddAddress)
     {
-        @Html.Partial("AddAddress", new AddUserAddressCommand{Id = @Model.UserViewId})
+        @Html.Partial("AddAddress", new AddUserAddress{Id = @Model.UserViewId})
     }
     
     <p>

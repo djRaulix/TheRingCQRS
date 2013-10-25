@@ -35,7 +35,7 @@
         #region Public Methods and Operators
 
         [HttpPost]
-        public ActionResult AddAddress(AddUserAddressCommand command)
+        public ActionResult AddAddress(AddUserAddress command)
         {
             if(this.commandBus.SendOk(command))
             {
@@ -46,7 +46,7 @@
         }
 
         [HttpPost]
-        public ActionResult Create(CreateUserCommand command)
+        public ActionResult Create(CreateUser command)
         {
             if (this.commandBus.SendOk(command))
             {

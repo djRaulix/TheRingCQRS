@@ -2,7 +2,6 @@
 {
     #region using
 
-    using TheRing.CQRS.Eventing.MassTransit;
     using TheRing.CQRS.RavenDb.Test;
 
     #endregion

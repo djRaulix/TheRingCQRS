@@ -3,6 +3,6 @@
     public interface IHandlesCommand<in TCommand>
         where TCommand : class, ICommand
     {
-        void Handles(IConsumesContext<TCommand> commandConsummer);
+        void Handles(IHandlesContext<TCommand> handlesContext);
     }
 }

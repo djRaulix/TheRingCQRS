@@ -53,10 +53,6 @@
     <Compile Include="Fakes\FakeAggregateRoot.cs" />
     <Compile Include="Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WhenUsingEditAggregate\AndEditingAggregateFromCreateCommand.cs" />
-    <Compile Include="WhenUsingEditAggregate\AndEditingAggregateFromUpdateCommand.cs" />
-    <Compile Include="WhenUsingEditAggregate\AndSavingAggregate.cs" />
-    <Compile Include="WhenUsingEditAggregate\WhenUsingEditAggregate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

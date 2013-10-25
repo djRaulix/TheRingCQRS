@@ -4,7 +4,7 @@
 
     using System;
 
-    using TheRing.CQRS.Commanding.MassTransit;
+    using TheRing.CQRS.MassTransit;
 
     #endregion
 

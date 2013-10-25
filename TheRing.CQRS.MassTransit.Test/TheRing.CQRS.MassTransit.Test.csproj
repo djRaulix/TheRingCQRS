@@ -77,10 +77,6 @@
     <Compile Include="WhenUsingEventBus\WhenUsingEventBus.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheRing.CQRS.Commanding.MassTransit\TheRing.CQRS.Commanding.MassTransit.csproj">
-      <Project>{2A42C857-9E89-48FB-B94A-357A1E89E0D3}</Project>
-      <Name>TheRing.CQRS.Commanding.MassTransit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">
       <Project>{1CBB2A4B-B50B-4203-BE76-30BE461969AE}</Project>
       <Name>TheRing.CQRS.Commanding</Name>
@@ -88,10 +84,6 @@
     <ProjectReference Include="..\TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj">
       <Project>{F63A407A-4EB7-4223-8730-B44E504476CF}</Project>
       <Name>TheRing.CQRS.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Eventing.MassTransit\TheRing.CQRS.Eventing.MassTransit.csproj">
-      <Project>{533ADA5D-678B-4282-9156-C95C361D2821}</Project>
-      <Name>TheRing.CQRS.Eventing.MassTransit</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
       <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>

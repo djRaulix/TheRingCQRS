@@ -24,5 +24,7 @@ namespace TheRing.CQRS.Commanding
         public Guid Id { get; private set; }
 
         #endregion
+
+        private int i;
     }
 }

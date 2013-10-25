@@ -2,13 +2,13 @@
 {
     using System;
 
-    public interface IEventSourcedRepository<out TEventSourced> where TEventSourced : EventSourced
+    public interface IEventSourcedRepository
     {
         #region Public Methods and Operators
 
-        TEventSourced Create(Guid id);
+        TEventSourced Create<TEventSourced>(Guid id)  where TEventSourced : EventSourced;
 
-        TEventSourced Get(Guid id, int? expectedVersion = null);
+        TEventSourced Get<TEventSourced>(Guid id, int? expectedVersion = null)  where TEventSourced : EventSourced;
 
         void Save(EventSourced eventSourced);
 

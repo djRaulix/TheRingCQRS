@@ -4,8 +4,6 @@
 
     using System;
 
-    using TheRing.CQRS.Domain;
-
     #endregion
 
     public class FakeAggregateRoot : IAggregateRoot
@@ -13,6 +11,10 @@
         #region Implementation of IAggregateRoot
 
         public void SetCurrentCorrelationId(Guid correlationId)
+        {
+        }
+
+        public void RunGeneric(ICommand command)
         {
         }
 

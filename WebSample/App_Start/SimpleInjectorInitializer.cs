@@ -18,9 +18,6 @@ namespace WebSample.App_Start
     using System.Reflection;
     using System.Web.Mvc;
 
-    using Magnum.Extensions;
-    using Magnum.Reflection;
-
     using MassTransit;
     using MassTransit.BusConfigurators;
     using MassTransit.Saga;
@@ -30,18 +27,15 @@ namespace WebSample.App_Start
     using SimpleInjector.Integration.Web.Mvc;
 
     using TheRing.CQRS.Commanding;
-    using TheRing.CQRS.Commanding.MassTransit;
     using TheRing.CQRS.Domain;
     using TheRing.CQRS.Eventing;
-    using TheRing.CQRS.Eventing.MassTransit;
     using TheRing.CQRS.Eventing.RavenDb;
-    using TheRing.CQRS.EventSourcedDomain;
     using TheRing.CQRS.MassTransit;
     using TheRing.MassTransit.RavenDb;
     using TheRing.RavenDb;
 
-    using WebSample.Commanding;
     using WebSample.Domain;
+    using WebSample.Domain.UserAgg;
     using WebSample.ReadModel;
     using WebSample.Sagas;
 
@@ -71,12 +65,10 @@ namespace WebSample.App_Start
             LoadRavenDbImplementation(container);
 
             var commandHandlers = LoadCommandLayer(container).ToList();
-            var readModelHandlers = LoadReadModelLayer(container).ToList();
+            var readModelHandlers = LoadEventLayer(container).ToList();
             var sagaHandlers = LoadSagaLayer().ToList();
 
             LoadMassTransitImplementation(container, commandHandlers, readModelHandlers);
-
-            LoadEventSourcedDomainLayer(container);
 
             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
 
@@ -89,53 +81,21 @@ namespace WebSample.App_Start
 
         private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadCommandLayer(Container container)
         {
-            container.RegisterSingleOpenGeneric(typeof(IEditAggregate<>), typeof(EditAggregate<>));
-            container.RegisterSingleOpenGeneric(typeof(CommandHandler<,>), typeof(CommandHandler<,>));
-            container.RegisterSingleOpenGeneric(typeof(CommandConsumer<>), typeof(CommandConsumer<>));
+            container.RegisterSingleOpenGeneric(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
+            container.RegisterOpenGeneric(typeof(CommandConsumer<>), typeof(CommandConsumer<>));
 
-            var runCommandType = typeof(IRunCommand<,>);
-            var commandRunners = from type in typeof(CreateUserCommand).Assembly.GetExportedTypes()
-                from @interface in
-                    type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == runCommandType)
-                group @interface by type
-                into grp
-                where grp.Any()
-                select new { type = grp.Key, interfaces = grp.ToList() };
+            var commandMapper = new CommandMapper();
+            commandMapper.AddMappings(typeof(User).Assembly);
 
-            foreach (var runner in commandRunners)
+            foreach (var mapping in commandMapper.Mappings)
             {
-                var registration = Lifestyle.Singleton.CreateRegistration(runner.type, runner.type, container);
-
-                foreach (var item in runner.interfaces)
-                {
-                    container.AddRegistration(item, registration);
-                    var args = item.GetGenericArguments();
-                    var commandType = args.Last();
-                    var commandHandlerType = typeof(CommandHandler<,>).MakeGenericType(args);
-                    var handlesCommandType = typeof(IHandlesCommand<>).MakeGenericType(commandType);
-                    container.RegisterSingle(handlesCommandType, () => container.GetInstance(commandHandlerType));
-                    var commandConsumerType = typeof(CommandConsumer<>).MakeGenericType(commandType);
-                    yield return
-                        new KeyValuePair<Type, Func<object>>(
-                            commandConsumerType,
-                            () => container.GetInstance(commandConsumerType));
-                }
+                container.RegisterSingle(mapping.HandlesCommandType, mapping.CommandHandlerType);
+                var commandConsumerType = typeof(CommandConsumer<>).MakeGenericType(mapping.CommandType);
+                yield return
+                    new KeyValuePair<Type, Func<object>>(
+                        commandConsumerType,
+                        () => container.GetInstance(commandConsumerType));
             }
-        }
-
-        private static void LoadEventSourcedDomainLayer(Container container)
-        {
-            var aggregates =
-                typeof(User).Assembly.GetExportedTypes().Where(t => t.Implements<EventSourcedAggregateRoot>()).ToList();
-
-            foreach (var aggregate in aggregates)
-            {
-                container.Register(aggregate, aggregate, Lifestyle.Transient);
-            }
-
-            container.RegisterSingle<IEventSourcedFactory>(() => new EventSourcedFactory(container.GetInstance));
-            container.RegisterSingleOpenGeneric(typeof(IEventSourcedRepository<>),typeof(EventSourcedRepository<>));
-            container.RegisterSingleOpenGeneric(typeof(IAggregateRootRepository<>), typeof(EventSourcedAggregateRootRepository<>));
         }
 
         private static void LoadMassTransitImplementation(
@@ -173,18 +133,19 @@ namespace WebSample.App_Start
             container.RegisterWithContext(
                 context =>
                 {
+                    var factory = container.GetInstance<ICqrsDocumentStoreFactory>();
                     if (context.ImplementationType == typeof(EventStore))
                     {
-                        return container.GetInstance<ICqrsDocumentStoreFactory>().EventStore;
+                        return factory.EventStore;
                     }
 
                     if (context.ImplementationType != null && context.ImplementationType.IsGenericType &&
                         context.ImplementationType.GetGenericTypeDefinition() == typeof(SagaRepository<>))
                     {
-                        return container.GetInstance<ICqrsDocumentStoreFactory>().SagaStore;
+                        return factory.SagaStore;
                     }
 
-                    return container.GetInstance<ICqrsDocumentStoreFactory>().ReadModel;
+                    return factory.ReadModel;
                 });
 
             container.RegisterSingle<IUserRepository, UserRepository>();
@@ -193,34 +154,33 @@ namespace WebSample.App_Start
             container.RegisterSingleOpenGeneric(typeof(ISagaRepository<>), typeof(SagaRepository<>));
         }
 
-        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadReadModelLayer(Container container)
+        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadEventLayer(Container container)
         {
-            var denormalizerType = typeof(IDenormalizeEvent<>);
-
-            var denormalizers = from type in typeof(UserViewDenormalizer).Assembly.GetExportedTypes()
-                from @interface in
-                    type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == denormalizerType)
-                group @interface by type
-                into grp
-                where grp.Any()
-                select new { type = grp.Key, interfaces = grp.ToList() };
-
-            foreach (var denormalizer in denormalizers)
-            {
-                var denType = denormalizer.type;
-
-                container.RegisterSingle(
-                    denType,
-                    () => FastActivator.Create(denType, container.GetInstance<IDenormalizerRepository>()));
-
-                foreach (var @interface in denormalizer.interfaces)
+            container.RegisterSingle<NoSnapshotKeeper>();
+            container.RegisterSingle<InMemorySnapshotKeeper>();
+            
+            container.RegisterWithContext<ISnapshotKeeper>(
+                context =>
                 {
-                    var eventType = @interface.GenericTypeArguments.First();
-                    var wrapper = typeof(Denormalizer<,>).MakeGenericType(denType, eventType);
+                    return container.GetInstance<InMemorySnapshotKeeper>();
+                });
+
+            container.RegisterSingle<IEventSourcedFactory>(() => new EventSourcedFactory(container.GetInstance));
+            container.RegisterSingle<IEventSourcedRepository, EventSourcedRepository>();
+            var mapper = new DenormalizerMapper();
+            mapper.AddMappings(typeof(UserViewDenormalizer).Assembly);
+
+            foreach (var denormalizer in mapper.Mappings)
+            {
+                var denormalizerType = denormalizer.DenormalizerType;
+                container.RegisterSingle(denormalizerType, denormalizerType);
+                foreach (var eventType in denormalizer.EventTypes)
+                {
+                    var wrapper = typeof(DenormalizerConsumer<>).MakeGenericType(eventType);
                     yield return
                         new KeyValuePair<Type, Func<object>>(
                             wrapper,
-                            () => Activator.CreateInstance(wrapper, container.GetInstance(denType)));
+                            () => Activator.CreateInstance(wrapper, container.GetInstance(denormalizerType)));
                 }
             }
         }
@@ -229,7 +189,7 @@ namespace WebSample.App_Start
         {
             return from type in typeof(CreateUserSaga).Assembly.GetExportedTypes()
                 where
-                    !type.IsAbstract && type.BaseType.IsGenericType &&
+                    !type.IsAbstract && type.BaseType != null && type.BaseType.IsGenericType &&
                     type.BaseType.GetGenericTypeDefinition() == typeof(WebSampleSaga<>)
                 select type;
         }

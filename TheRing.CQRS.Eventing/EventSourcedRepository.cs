@@ -6,21 +6,26 @@
 
     #endregion
 
-    public class EventSourcedRepository<TEventSourced> : IEventSourcedRepository<TEventSourced>
-        where TEventSourced : EventSourced
+    public class EventSourcedRepository : IEventSourcedRepository
+
     {
         #region Fields
 
         private readonly IEventSourcedFactory eventSourcedFactory;
 
+        private readonly ISnapshotKeeper keeper;
         private readonly IEventStore store;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public EventSourcedRepository(IEventStore store, IEventSourcedFactory eventSourcedFactory)
+        public EventSourcedRepository(
+            ISnapshotKeeper keeper,
+            IEventStore store,
+            IEventSourcedFactory eventSourcedFactory)
         {
+            this.keeper = keeper;
             this.store = store;
             this.eventSourcedFactory = eventSourcedFactory;
         }
@@ -29,7 +34,7 @@
 
         #region Public Methods and Operators
 
-        public TEventSourced Create(Guid id)
+        public TEventSourced Create<TEventSourced>(Guid id) where TEventSourced : EventSourced
         {
             var eventSourced = this.eventSourcedFactory.Create<TEventSourced>();
             eventSourced.Id = id;
@@ -37,28 +42,46 @@
         }
 
 
-        public TEventSourced Get(Guid id, int? expectedVersion = null)
+        public TEventSourced Get<TEventSourced>(Guid id, int? expectedVersion = null) where TEventSourced : EventSourced
         {
-            var aggregateRoot = this.Create(id);
+            var eventSourced = this.Create<TEventSourced>(id);
 
-            aggregateRoot.LoadFromHistory(this.store.GetEvents(id));
+            try
+            {
+                eventSourced.Restore(this.keeper.Get(id));
+            }
+            catch
+            {
+                this.keeper.Delete(id);
+                eventSourced = this.Create<TEventSourced>(id);
+            }
 
-            if (aggregateRoot.Version == 0)
+            eventSourced.LoadFromHistory(this.store.GetEvents(id, eventSourced.Version + 1));
+
+            if (eventSourced.Version == 0)
             {
                 throw new UnknownEventSourcedException(id);
             }
 
-            if (expectedVersion.HasValue && aggregateRoot.Version != expectedVersion)
+            if (expectedVersion.HasValue && eventSourced.Version != expectedVersion)
             {
                 throw new NotExpectedVersionDuringLoadException(id, expectedVersion.Value);
             }
 
-            return aggregateRoot;
+            return eventSourced;
         }
 
         public void Save(EventSourced eventSourced)
         {
             this.store.SaveEvents(eventSourced.Changes);
+
+            try
+            {
+                this.keeper.Set(eventSourced.Id, eventSourced.Snapshot());
+            }
+            catch
+            {
+            }
         }
 
         #endregion

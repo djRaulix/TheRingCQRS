@@ -102,26 +102,25 @@
     <Compile Include="App_Start\CqrsDocumentStoreFactoryInitializer.cs" />
     <Compile Include="App_Start\DependencyContext.cs" />
     <Compile Include="App_Start\SimpleInjectorInitializer.cs" />
-    <Compile Include="Commanding\AddUserAddressCommand.cs" />
-    <Compile Include="Commanding\ConfirmUserCommand.cs" />
-    <Compile Include="Commanding\CreateUserCommand.cs" />
-    <Compile Include="Commanding\UserCommandHandler.cs" />
+    <Compile Include="Domain\UserAgg\Commands\AddUserAddress.cs" />
+    <Compile Include="Domain\UserAgg\Commands\ConfirmUser.cs" />
+    <Compile Include="Domain\UserAgg\Commands\CreateUser.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Domain\User.cs" />
-    <Compile Include="Eventing\UserConfirmed.cs" />
-    <Compile Include="Eventing\UserAddressAdded.cs" />
-    <Compile Include="Eventing\UserCreated.cs" />
+    <Compile Include="Domain\UserAgg\User.cs" />
+    <Compile Include="Domain\UserAgg\Events\UserConfirmed.cs" />
+    <Compile Include="Domain\UserAgg\Events\UserAddressAdded.cs" />
+    <Compile Include="Domain\UserAgg\Events\UserCreated.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadModel\IUserRepository.cs" />
-    <Compile Include="ReadModel\UserIdentityTransformer.cs" />
-    <Compile Include="ReadModel\UserIdentity.cs" />
-    <Compile Include="ReadModel\UserRepository.cs" />
-    <Compile Include="ReadModel\UserView.cs" />
-    <Compile Include="ReadModel\UserViewDenormalizer.cs" />
+    <Compile Include="ReadModel\User\IUserRepository.cs" />
+    <Compile Include="ReadModelImpl\User\UserIdentityTransformer.cs" />
+    <Compile Include="ReadModel\User\UserIdentity.cs" />
+    <Compile Include="ReadModelImpl\User\UserRepository.cs" />
+    <Compile Include="ReadModel\User\UserView.cs" />
+    <Compile Include="ReadModel\User\UserViewDenormalizer.cs" />
     <Compile Include="Sagas\CreateUserSaga.cs" />
     <Compile Include="Sagas\WebSampleSaga.cs" />
   </ItemGroup>
@@ -146,11 +145,6 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheRing.CQRS.Commanding.MassTransit\TheRing.CQRS.Commanding.MassTransit.csproj">
-      <Project>{2A42C857-9E89-48FB-B94A-357A1E89E0D3}</Project>
-      <Name>TheRing.CQRS.Commanding.MassTransit</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">
       <Project>{1cbb2a4b-b50b-4203-be76-30be461969ae}</Project>
       <Name>TheRing.CQRS.Commanding</Name>
@@ -161,11 +155,6 @@
       <Name>TheRing.CQRS.Domain</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Eventing.MassTransit\TheRing.CQRS.Eventing.MassTransit.csproj">
-      <Project>{533ADA5D-678B-4282-9156-C95C361D2821}</Project>
-      <Name>TheRing.CQRS.Eventing.MassTransit</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing.RavenDb\TheRing.CQRS.Eventing.RavenDb.csproj">
       <Project>{BFFE2398-DF5E-440D-92B6-1B903A533A60}</Project>
       <Name>TheRing.CQRS.Eventing.RavenDb</Name>
@@ -174,11 +163,6 @@
     <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
       <Project>{b1b87d37-25cb-4953-97b7-2a7627798d25}</Project>
       <Name>TheRing.CQRS.Eventing</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.EventSourcedDomain\TheRing.CQRS.EventSourcedDomain.csproj">
-      <Project>{6FA3EC5E-2DE4-4F39-968C-33254F5F7447}</Project>
-      <Name>TheRing.CQRS.EventSourcedDomain</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.MassTransit\TheRing.CQRS.MassTransit.csproj">
@@ -239,11 +223,11 @@
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PreBuildEvent>robocopy $(SolutionDir)bin\debug\ $(TargetDir) /xo</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>(robocopy $(SolutionDir)bin\debug\ $(TargetDir) /xo) ^&amp; if %25ERRORLEVEL%25 LEQ 1 exit 0</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

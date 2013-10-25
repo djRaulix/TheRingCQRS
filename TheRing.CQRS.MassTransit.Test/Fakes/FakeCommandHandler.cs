@@ -1,20 +1,24 @@
 ﻿namespace TheRing.CQRS.MassTransit.Test.Fakes
 {
+    #region using
+
     using TheRing.CQRS.Commanding;
 
-    public class FakeCommandHandler : IRunCommand<FakeAggregateRoot, FakeCommand>
+    #endregion
+
+    public class FakeCommandHandler : IHandlesCommand<FakeCommand>
     {
-        #region Implementation of IRunCommand<in FakeAggregateRoot,in FakeCommand>
+        #region Public Properties
 
-        public FakeCommand LastFakeCommand
-        {
-            get;
-            private set;
-        }
+        public FakeCommand LastFakeCommand { get; private set; }
 
-        public void Run(FakeAggregateRoot aggregateRoot, FakeCommand command)
+        #endregion
+
+        #region Public Methods and Operators
+
+        public void Handles(IHandlesContext<FakeCommand> commandConsummer)
         {
-            LastFakeCommand = command;
+            this.LastFakeCommand = commandConsummer.Command;
         }
 
         #endregion

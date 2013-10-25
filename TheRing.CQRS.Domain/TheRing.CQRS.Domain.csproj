@@ -32,16 +32,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AggregateRootConcurrencyException.cs" />
-    <Compile Include="IAggregateRoot.cs" />
-    <Compile Include="IAggregateRootRepository.cs" />
+    <Compile Include="AggregateRoot.cs" />
+    <Compile Include="AggregateRootRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">
+      <Project>{1CBB2A4B-B50B-4203-BE76-30BE461969AE}</Project>
+      <Name>TheRing.CQRS.Commanding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
+      <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>
+      <Name>TheRing.CQRS.Eventing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

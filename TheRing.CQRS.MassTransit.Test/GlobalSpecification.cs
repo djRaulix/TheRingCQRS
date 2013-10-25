@@ -10,7 +10,6 @@
     using global::MassTransit;
 
     using TheRing.CQRS.Commanding;
-    using TheRing.CQRS.Eventing.MassTransit;
     using TheRing.CQRS.MassTransit;
     using TheRing.CQRS.MassTransit.Test.Fakes;
 
@@ -59,13 +58,11 @@
                                 new[]
                                 {
                                     new KeyValuePair<Type, Func<object>>(
-                                        typeof(Denormalizer<FakeEventDenormalizer, FakeEvent>),
+                                        typeof(DenormalizerConsumer<>),
                                         () =>
-                                            new Denormalizer<FakeEventDenormalizer, FakeEvent>(FakeEventDenormalizer))
+                                            new DenormalizerConsumer<FakeEvent>(FakeEventDenormalizer))
                                 });
 
-
-                            EditAggregate = A.Fake<IEditAggregate<FakeAggregateRoot>>();
                             FakeCommandHandler = new FakeCommandHandler();
 
                             busFactory.Set(
@@ -73,11 +70,9 @@
                                 new[]
                                 {
                                     new KeyValuePair<Type, Func<object>>(
-                                        typeof(CommandHandler<FakeAggregateRoot, FakeCommand>),
+                                        typeof(CommandConsumer<FakeCommand>),
                                         () =>
-                                            new CommandHandler<FakeAggregateRoot, FakeCommand>(
-                                                EditAggregate,
-                                                FakeCommandHandler))
+                                            new CommandConsumer<FakeCommand>(FakeCommandHandler))
                                 });
 
                             busFactory.Set(CommandResponseQueue);
@@ -104,8 +99,6 @@
                 return BusFactory.Get(CommandResponseQueue);
             }
         }
-
-        public static IEditAggregate<FakeAggregateRoot> EditAggregate { get; private set; }
 
         public static IServiceBus EventServiceBus
         {
