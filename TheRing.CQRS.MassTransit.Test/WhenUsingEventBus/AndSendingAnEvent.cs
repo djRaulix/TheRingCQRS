@@ -16,7 +16,7 @@
     {
         #region Fields
 
-        private Event @event;
+        private AbstractEvent @event;
 
         #endregion
 

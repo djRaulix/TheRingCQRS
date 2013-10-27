@@ -6,12 +6,14 @@
 
     using Magnum.StateMachine;
 
-    using WebSample.Commanding;
-    using WebSample.Eventing;
+    using TheRing.CQRS.MassTransit;
+
+    using WebSample.Commanding.User;
+    using WebSample.Domain.User;
 
     #endregion
 
-    public class CreateUserSaga : WebSampleSaga<CreateUserSaga>
+    public class CreateUserSaga : AbstractSagaStateMachineBase<CreateUserSaga>
     {
         #region Constructors and Destructors
 

@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TheRing.CQRS.MassTransit.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="RequestQueue" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rabbitmq://localhost/Requests</Value>
+    </Setting>
+    <Setting Name="ResponseQueue" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rabbitmq://localhost/Responses</Value>
+    </Setting>
+    <Setting Name="ReadModelQueue" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rabbitmq://localhost/ReadModel</Value>
+    </Setting>
+    <Setting Name="SagaQueue" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">rabbitmq://localhost/Sagas</Value>
+    </Setting>
+    <Setting Name="NbMaxTries" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

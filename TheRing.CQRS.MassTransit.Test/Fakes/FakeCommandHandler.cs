@@ -3,10 +3,12 @@
     #region using
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding.Context;
+    using TheRing.CQRS.Commanding.Handler;
 
     #endregion
 
-    public class FakeCommandHandler : IHandlesCommand<FakeCommand>
+    public class FakeCommandHandler : IHandleCommand<FakeCommand>
     {
         #region Public Properties
 
@@ -16,7 +18,7 @@
 
         #region Public Methods and Operators
 
-        public void Handles(IHandlesContext<FakeCommand> commandConsummer)
+        public void Handle(IHandleContext<FakeCommand> commandConsummer)
         {
             this.LastFakeCommand = commandConsummer.Command;
         }

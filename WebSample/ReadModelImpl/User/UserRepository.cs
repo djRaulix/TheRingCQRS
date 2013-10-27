@@ -13,7 +13,7 @@
 
     #endregion
 
-    public class UserRepository : ReadModelRepository, IUserRepository
+    public class UserRepository : AbstractReadModelRepository, IUserRepository
     {
         #region Constructors and Destructors
 

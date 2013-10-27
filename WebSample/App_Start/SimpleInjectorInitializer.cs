@@ -26,16 +26,21 @@ namespace WebSample.App_Start
     using SimpleInjector.Extensions;
     using SimpleInjector.Integration.Web.Mvc;
 
-    using TheRing.CQRS.Commanding;
-    using TheRing.CQRS.Domain;
+    using TheRing.CQRS.Application;
+    using TheRing.CQRS.Commanding.Bus;
+    using TheRing.CQRS.Commanding.Handler;
     using TheRing.CQRS.Eventing;
+    using TheRing.CQRS.Eventing.Bus;
+    using TheRing.CQRS.Eventing.EventSourced.Factory;
+    using TheRing.CQRS.Eventing.EventSourced.Repository;
+    using TheRing.CQRS.Eventing.EventSourced.Snapshot;
+    using TheRing.CQRS.Eventing.EventStore;
     using TheRing.CQRS.Eventing.RavenDb;
     using TheRing.CQRS.MassTransit;
-    using TheRing.MassTransit.RavenDb;
+    using TheRing.CQRS.MassTransit.RavenDb;
     using TheRing.RavenDb;
 
-    using WebSample.Domain;
-    using WebSample.Domain.UserAgg;
+    using WebSample.Domain.User;
     using WebSample.ReadModel;
     using WebSample.Sagas;
 
@@ -81,42 +86,108 @@ namespace WebSample.App_Start
 
         private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadCommandLayer(Container container)
         {
-            container.RegisterSingleOpenGeneric(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
-            container.RegisterOpenGeneric(typeof(CommandConsumer<>), typeof(CommandConsumer<>));
+            container.RegisterOpenGeneric(typeof(HandleContext<>), typeof(HandleContext<>));
+            container.RegisterSingle<IHandleException,ExceptionHandler>();
+            container.RegisterSingleDecorator(
+                typeof(IHandleException),
+                typeof(NewerEventSourcedConcurrencyHandleExceptionDecorator));
+            container.RegisterSingleDecorator(typeof(IHandleException), typeof(ConcurrencyHandleExceptionDecorator));
+            container.RegisterSingleOpenGeneric(typeof(IHandleCommand<>), typeof(CommandHandler<>));
 
-            var commandMapper = new CommandMapper();
-            commandMapper.AddMappings(typeof(User).Assembly);
+            var runners =
+                from r in typeof(User).Assembly.GetExportedTypes().Where(t => !t.IsAbstract)
+                from i in
+                    r.GetInterfaces()
+                        .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRunCommand<,>))
+                group i by r
+                into grp
+                where grp.Any()
+                select grp;
 
-            foreach (var mapping in commandMapper.Mappings)
+            foreach (var runner in runners)
             {
-                container.RegisterSingle(mapping.HandlesCommandType, mapping.CommandHandlerType);
-                var commandConsumerType = typeof(CommandConsumer<>).MakeGenericType(mapping.CommandType);
-                yield return
-                    new KeyValuePair<Type, Func<object>>(
-                        commandConsumerType,
-                        () => container.GetInstance(commandConsumerType));
+                var registration = Lifestyle.Singleton.CreateRegistration(runner.Key, runner.Key, container);
+                foreach (var type in runner)
+                {
+                    container.AddRegistration(type, registration);
+                    var args = type.GenericTypeArguments;
+                    var command = args[1];
+                    var commandRunnerType = typeof(CommandRunner<,>).MakeGenericType(args);
+                    var runCommandInterface = typeof(IRunCommand<>).MakeGenericType(command);
+
+                    container.RegisterSingle(runCommandInterface, commandRunnerType);
+                    var contextHandler = typeof(HandleContext<>).MakeGenericType(command);
+
+                    yield return
+                        new KeyValuePair<Type, Func<object>>(
+                            contextHandler,
+                            () => container.GetInstance(contextHandler));
+                }
+            }
+        }
+
+        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadEventLayer(Container container)
+        {
+            container.RegisterSingleOpenGeneric(typeof(EventConsumer<>), typeof(EventConsumer<>));
+            container.RegisterSingle<IEventSourcedFactory>(() => new EventSourcedFactory(container.GetInstance));
+            container.RegisterSingleOpenGeneric(typeof(IEventSourcedRepository<>), typeof(EventSourcedRepository<>));
+            container.RegisterSingleDecorator(
+                typeof(IEventSourcedRepository<User>),
+                typeof(SnaphotEventSourcedRepositoryDecorator<User>));
+            container.RegisterSingle<InMemorySnapshotKeeper>();
+
+            container.RegisterWithContext<ISnapshotKeeper>(
+                context => { return container.GetInstance<InMemorySnapshotKeeper>(); });
+
+            var subscribers = from type in typeof(User).Assembly.GetExportedTypes()
+                where !type.IsAbstract
+                from @interface in
+                    type.GetInterfaces()
+                where @interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(ISubscribeEvent<>)
+                group @interface by type
+                into grp
+                where grp.Any()
+                select grp;
+
+            foreach (var subscriber in subscribers)
+            {
+                var registration = Lifestyle.Singleton.CreateRegistration(subscriber.Key, subscriber.Key, container);
+                foreach (var type in subscriber)
+                {
+                    container.AddRegistration(type, registration);
+
+                    var eventConsumer = typeof(EventConsumer<>).MakeGenericType(type.GenericTypeArguments.Single());
+                    yield return
+                        new KeyValuePair<Type, Func<object>>(
+                            eventConsumer,
+                            () => container.GetInstance(eventConsumer));
+                }
             }
         }
 
         private static void LoadMassTransitImplementation(
             Container container,
             IEnumerable<KeyValuePair<Type, Func<object>>> commandConsumers,
-            IEnumerable<KeyValuePair<Type, Func<object>>> publishConsumers)
+            IEnumerable<KeyValuePair<Type, Func<object>>> eventConsumers)
         {
             var factory = new BusFactory(container.GetInstance);
             container.RegisterSingle<IBusFactory>(() => factory);
 
             Action<ServiceBusConfigurator> config = sbc => sbc.UseRabbitMq();
+            factory.InitCommanding(commandConsumers, config);
 
-            factory.Set(Constants.RequestQueue, commandConsumers, moreConfig: config);
-
-            factory.Set(Constants.ResponseQueue, moreConfig: config);
-
-            factory.Set(Constants.ReadModelQueue, publishConsumers, moreConfig: config);
-
-            container.RegisterSingle(factory.Get(Constants.ReadModelQueue).EventBus());
-            container.RegisterSingle(
-                factory.Get(Constants.ResponseQueue).CommandBus(Constants.RequestQueue));
+            factory.InitEventing(eventConsumers, config);
+            container.RegisterSingle<IEventBus, EventBus>();
+            container.RegisterSingle<ICommandBus, CommandBus>();
+            container.RegisterWithContext(
+                context =>
+                {
+                    if (context.ImplementationType == typeof(CommandBus))
+                    {
+                        return factory.RequestQueue();
+                    }
+                    return factory.ReadModelQueue();
+                });
         }
 
         private static void LoadRavenDbImplementation(Container container)
@@ -154,50 +225,18 @@ namespace WebSample.App_Start
             container.RegisterSingleOpenGeneric(typeof(ISagaRepository<>), typeof(SagaRepository<>));
         }
 
-        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadEventLayer(Container container)
-        {
-            container.RegisterSingle<NoSnapshotKeeper>();
-            container.RegisterSingle<InMemorySnapshotKeeper>();
-            
-            container.RegisterWithContext<ISnapshotKeeper>(
-                context =>
-                {
-                    return container.GetInstance<InMemorySnapshotKeeper>();
-                });
-
-            container.RegisterSingle<IEventSourcedFactory>(() => new EventSourcedFactory(container.GetInstance));
-            container.RegisterSingle<IEventSourcedRepository, EventSourcedRepository>();
-            var mapper = new DenormalizerMapper();
-            mapper.AddMappings(typeof(UserViewDenormalizer).Assembly);
-
-            foreach (var denormalizer in mapper.Mappings)
-            {
-                var denormalizerType = denormalizer.DenormalizerType;
-                container.RegisterSingle(denormalizerType, denormalizerType);
-                foreach (var eventType in denormalizer.EventTypes)
-                {
-                    var wrapper = typeof(DenormalizerConsumer<>).MakeGenericType(eventType);
-                    yield return
-                        new KeyValuePair<Type, Func<object>>(
-                            wrapper,
-                            () => Activator.CreateInstance(wrapper, container.GetInstance(denormalizerType)));
-                }
-            }
-        }
-
         private static IEnumerable<Type> LoadSagaLayer()
         {
             return from type in typeof(CreateUserSaga).Assembly.GetExportedTypes()
                 where
                     !type.IsAbstract && type.BaseType != null && type.BaseType.IsGenericType &&
-                    type.BaseType.GetGenericTypeDefinition() == typeof(WebSampleSaga<>)
+                    type.BaseType.GetGenericTypeDefinition() == typeof(AbstractSagaStateMachineBase<>)
                 select type;
         }
 
         private static void LoadSagas(Container container, IEnumerable<Type> sagaConsumers)
         {
-            container.GetInstance<IBusFactory>()
-                .Set(Constants.SagaQueue, sagas: sagaConsumers, moreConfig: sbc => sbc.UseRabbitMq());
+            container.GetInstance<IBusFactory>().InitSagas(sagaConsumers, sbc => sbc.UseRabbitMq());
         }
 
         #endregion

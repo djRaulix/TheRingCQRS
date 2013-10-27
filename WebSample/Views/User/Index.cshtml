@@ -1,38 +1,39 @@
-﻿@using WebSample.Commanding
+﻿@using WebSample.Commanding.User
 @model IEnumerable<WebSample.ReadModel.UserIdentity>
 
 @{
-    Layout = null;
+    this.Layout = null;
 }
 
 <!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-    <p>
-        @Html.Partial("Create", new CreateUser())
-    </p>
-    <table>
-        <tr>
-            <th>First name</th>
-            <th>Last name</th>
-            <th></th>
-        </tr>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Index</title>
+    </head>
+    <body>
+        <p>
+            @(this.Html.Partial("Create", new CreateUser()))
+        </p>
+        <table>
+            <tr>
+                <th>First name</th>
+                <th>Last name</th>
+                <th></th>
+            </tr>
     
-    @foreach (var item in Model) {
-        <tr>
-            <td>@item.FirstName</td>
-            <td>@item.LastName</td>
-            <td>
-                @Html.ActionLink("Details", "Details", new { Id=item.UserIdentityId })
-            </td>
-        </tr>
-    }
+            @foreach (var item in this.Model)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>
+                        @(this.Html.ActionLink("Details", "Details", new { Id = item.UserIdentityId }))
+                    </td>
+                </tr>
+            }
     
-    </table>
-</body>
+        </table>
+    </body>
 </html>

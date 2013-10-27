@@ -102,15 +102,15 @@
     <Compile Include="App_Start\CqrsDocumentStoreFactoryInitializer.cs" />
     <Compile Include="App_Start\DependencyContext.cs" />
     <Compile Include="App_Start\SimpleInjectorInitializer.cs" />
-    <Compile Include="Domain\UserAgg\Commands\AddUserAddress.cs" />
-    <Compile Include="Domain\UserAgg\Commands\ConfirmUser.cs" />
-    <Compile Include="Domain\UserAgg\Commands\CreateUser.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Commanding\User\AddUserAddress.cs" />
+    <Compile Include="Commanding\User\ConfirmUser.cs" />
+    <Compile Include="Commanding\User\CreateUser.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Domain\UserAgg\User.cs" />
-    <Compile Include="Domain\UserAgg\Events\UserConfirmed.cs" />
-    <Compile Include="Domain\UserAgg\Events\UserAddressAdded.cs" />
-    <Compile Include="Domain\UserAgg\Events\UserCreated.cs" />
+    <Compile Include="Commanding\User\UserCommandRunner.cs" />
+    <Compile Include="Domain\User\User.cs" />
+    <Compile Include="Domain\User\UserConfirmed.cs" />
+    <Compile Include="Domain\User\UserAddressAdded.cs" />
+    <Compile Include="Domain\User\UserCreated.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -122,7 +122,6 @@
     <Compile Include="ReadModel\User\UserView.cs" />
     <Compile Include="ReadModel\User\UserViewDenormalizer.cs" />
     <Compile Include="Sagas\CreateUserSaga.cs" />
-    <Compile Include="Sagas\WebSampleSaga.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -145,14 +144,13 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TheRing.CQRS.Application\TheRing.CQRS.Application.csproj">
+      <Project>{5a43d301-fa69-47b0-9bee-5dd57833fb51}</Project>
+      <Name>TheRing.CQRS.Application</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">
       <Project>{1cbb2a4b-b50b-4203-be76-30be461969ae}</Project>
       <Name>TheRing.CQRS.Commanding</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj">
-      <Project>{F63A407A-4EB7-4223-8730-B44E504476CF}</Project>
-      <Name>TheRing.CQRS.Domain</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.CQRS.Eventing.RavenDb\TheRing.CQRS.Eventing.RavenDb.csproj">
@@ -170,9 +168,9 @@
       <Name>TheRing.CQRS.MassTransit</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\TheRing.MassTransit.RavenDb\TheRing.MassTransit.RavenDb.csproj">
+    <ProjectReference Include="..\TheRing.MassTransit.RavenDb\TheRing.CQRS.MassTransit.RavenDb.csproj">
       <Project>{225BB9E8-D0E0-4CC9-81E8-08CD8C3CD1EE}</Project>
-      <Name>TheRing.MassTransit.RavenDb</Name>
+      <Name>TheRing.CQRS.MassTransit.RavenDb</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.RavenDb\TheRing.RavenDb.csproj">

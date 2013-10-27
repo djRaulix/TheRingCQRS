@@ -6,10 +6,12 @@
 
     using global::MassTransit;
 
-    using Magnum;
     using Magnum.Extensions;
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding.Bus;
+    using TheRing.CQRS.Commanding.Handler;
+    using TheRing.CQRS.MassTransit.Properties;
 
     #endregion
 
@@ -17,72 +19,46 @@
     {
         #region Fields
 
-        private readonly IServiceBus bus;
-
         private readonly IEndpoint requestEndPoint;
+        private readonly IServiceBus serviceBus;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public CommandBus(IServiceBus bus, string requestQueue)
+        public CommandBus(IServiceBus serviceBus)
         {
-            this.bus = bus;
-            this.requestEndPoint = bus.GetEndpoint(new Uri(requestQueue));
+            this.serviceBus = serviceBus;
+            this.requestEndPoint = serviceBus.GetEndpoint(new Uri(Settings.Default.RequestQueue));
         }
 
         #endregion
 
         #region Public Methods and Operators
 
-        public void Send<T>(T command, Guid correlationId) where T : class, ICommand, new()
+        public void Send<T>(T command, Guid correlationId) where T : AbstractCommand
         {
-            command.SetCorrelationId(correlationId);
+            command.CorrelationId = correlationId;
             this.requestEndPoint.Send(command);
         }
 
-        public void Send<T>(T command) where T : class, ICommand, new()
+        public RequestResult SendRequest<T>(T command, Guid correlationId) where T : AbstractCommand
         {
-            this.Send(command, CombGuid.Generate());
-        }
-
-        public bool SendOk<T>(T command, Guid correlationId) where T : class, ICommand, new()
-        {
-            return this.SendRequest(command, correlationId) == RequestResult.Ok;
-        }
-
-        public bool SendOk<T>(T command) where T : class, ICommand, new()
-        {
-            return this.SendRequest(command) == RequestResult.Ok;
-        }
-
-        public RequestResult SendRequest<T>(T command, Guid correlationId) where T : class, ICommand, new()
-        {
-            command.SetCorrelationId(correlationId);
+            command.CorrelationId = correlationId;
             command.ExpectResponse = true;
             var response = RequestResult.Failed;
-
             this.requestEndPoint.SendRequest(
-                command, 
-                this.bus, 
+                command,
+                this.serviceBus,
                 c =>
                 {
                     c.Handle<DoneResponse>(h => response = RequestResult.Ok);
                     c.Handle<ConcurrencyExceptionResponse>(h => response = RequestResult.ConcurrencyException);
-                    c.HandleTimeout(10.Seconds(), h => response = RequestResult.Failed);
+                    c.HandleTimeout(30.Seconds(), h => response = RequestResult.Failed);
                     c.HandleFault(h => response = RequestResult.Failed);
                 });
             return response;
         }
-
-        public RequestResult SendRequest<T>(T command) where T : class, ICommand, new()
-        {
-            return this.SendRequest(command, CombGuid.Generate());
-        }
-
-        #endregion
-
-        #region Methods
 
         #endregion
     }

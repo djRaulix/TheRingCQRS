@@ -62,7 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fakes\FakeAggregateRoot.cs" />
+    <Compile Include="Fakes\FakeCommandRunner.cs" />
     <Compile Include="Fakes\FakeCommand.cs" />
     <Compile Include="Fakes\FakeCommandHandler.cs" />
     <Compile Include="Fakes\FakeEvent.cs" />

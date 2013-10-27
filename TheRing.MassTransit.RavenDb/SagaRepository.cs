@@ -1,4 +1,4 @@
-﻿namespace TheRing.MassTransit.RavenDb
+﻿namespace TheRing.CQRS.MassTransit.RavenDb
 {
     #region using
 
@@ -14,8 +14,6 @@
     using Raven.Abstractions.Exceptions;
     using Raven.Client;
     using Raven.Client.Linq;
-
-    using TheRing.RavenDb;
 
     #endregion
 
@@ -150,7 +148,7 @@
         {
             using (var session = this.documentStore.OpenSession())
             {
-                var conventions = documentStore.Conventions;
+                var conventions = this.documentStore.Conventions;
                 return session.Advanced.LoadStartingWith<TSaga>(conventions.FindTypeTagName(typeof(TSaga)) + conventions.IdentityPartsSeparator).Select(transformer);
             }
         }

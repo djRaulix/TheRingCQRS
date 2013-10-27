@@ -2,7 +2,7 @@
 {
     using TheRing.CQRS.Eventing;
 
-    public class FakeEventDenormalizer : IDenormalizeEvent<FakeEvent>
+    public class FakeEventDenormalizer : ISubscribesEvent<FakeEvent>
     {
         #region Implementation of IDenormalizeEvent<in FakeEvent>
 

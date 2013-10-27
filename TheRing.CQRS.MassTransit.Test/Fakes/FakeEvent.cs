@@ -10,7 +10,7 @@ namespace TheRing.CQRS.MassTransit.Test.Fakes
 
     using TheRing.CQRS.Eventing;
 
-    public class FakeEvent : Event
+    public class FakeEvent : AbstractEvent
     {
         public FakeEvent()
         {

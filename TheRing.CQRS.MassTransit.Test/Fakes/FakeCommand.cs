@@ -2,7 +2,7 @@
 {
     using TheRing.CQRS.Commanding;
 
-    public class FakeCommand : UpdateCommand
+    public class FakeCommand : AbstractUpdateCommand
     {
         
     }

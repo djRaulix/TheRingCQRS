@@ -58,9 +58,9 @@
                                 new[]
                                 {
                                     new KeyValuePair<Type, Func<object>>(
-                                        typeof(DenormalizerConsumer<>),
+                                        typeof(EventConsumer<>),
                                         () =>
-                                            new DenormalizerConsumer<FakeEvent>(FakeEventDenormalizer))
+                                            new EventConsumer<FakeEvent>(FakeEventDenormalizer))
                                 });
 
                             FakeCommandHandler = new FakeCommandHandler();
@@ -70,9 +70,9 @@
                                 new[]
                                 {
                                     new KeyValuePair<Type, Func<object>>(
-                                        typeof(CommandConsumer<FakeCommand>),
+                                        typeof(MassTransitHandleContext<FakeCommand>),
                                         () =>
-                                            new CommandConsumer<FakeCommand>(FakeCommandHandler))
+                                            new MassTransitHandleContext<FakeCommand>(FakeCommandHandler))
                                 });
 
                             busFactory.Set(CommandResponseQueue);

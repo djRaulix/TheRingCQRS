@@ -11,6 +11,7 @@
     using NUnit.Framework;
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding.Bus;
     using TheRing.CQRS.MassTransit.Test.Fakes;
     using TheRing.CQRS.RavenDb.Test;
 

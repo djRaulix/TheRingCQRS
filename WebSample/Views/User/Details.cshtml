@@ -1,35 +1,36 @@
-﻿@using WebSample.Commanding
+﻿@using WebSample.Commanding.User
 @model WebSample.ReadModel.UserView
 
 @{
-    Layout = null;
+    this.Layout = null;
 }
 
 <!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
-    <fieldset>
-        <legend>User Details</legend>
-        User @( Model.Confirmed ? "" : "not" ) confirmed<br>
-        First name : @Model.FirstName<br/>
-        last name : @Model.LastName<br/>
-        Addresses : <br/>
-        @foreach (var item in Model.Addresses) {
-            @item<br/>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Details</title>
+    </head>
+    <body>
+        <fieldset>
+            <legend>User Details</legend>
+            User @(this.Model.Confirmed ? "" : "not") confirmed<br>
+            First name : @(this.Model.FirstName)<br/>
+            last name : @(this.Model.LastName)<br/>
+            Addresses : <br/>
+            @foreach (var item in this.Model.Addresses)
+            {
+                @item<br/>
+            }
+        </fieldset>
+        @if (this.Model.CanAddAddress)
+        {
+            @(this.Html.Partial("AddAddress", new AddUserAddress { Id = this.Model.UserViewId }))
         }
-    </fieldset>
-    @if (Model.CanAddAddress)
-    {
-        @Html.Partial("AddAddress", new AddUserAddress{Id = @Model.UserViewId})
-    }
     
-    <p>
-        @Html.ActionLink("Back to List", "Index")
-    </p>
-</body>
+        <p>
+            @(this.Html.ActionLink("Back to List", "Index"))
+        </p>
+    </body>
 </html>

@@ -90,9 +90,9 @@
       <Project>{b1b87d37-25cb-4953-97b7-2a7627798d25}</Project>
       <Name>TheRing.CQRS.Eventing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TheRing.MassTransit.RavenDb\TheRing.MassTransit.RavenDb.csproj">
+    <ProjectReference Include="..\TheRing.MassTransit.RavenDb\TheRing.CQRS.MassTransit.RavenDb.csproj">
       <Project>{225BB9E8-D0E0-4CC9-81E8-08CD8C3CD1EE}</Project>
-      <Name>TheRing.MassTransit.RavenDb</Name>
+      <Name>TheRing.CQRS.MassTransit.RavenDb</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.RavenDb.Test\TheRing.RavenDb.Test.csproj">
       <Project>{DD0A6BD3-0BF2-484B-A251-C24393685391}</Project>

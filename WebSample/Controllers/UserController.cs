@@ -7,8 +7,9 @@
     using System.Web.Routing;
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding.Bus;
 
-    using WebSample.Commanding;
+    using WebSample.Commanding.User;
     using WebSample.ReadModel;
 
     #endregion

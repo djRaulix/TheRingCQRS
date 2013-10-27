@@ -5,6 +5,7 @@
     using global::MassTransit;
 
     using TheRing.CQRS.Eventing;
+    using TheRing.CQRS.Eventing.Bus;
 
     #endregion
 
@@ -27,7 +28,7 @@
 
         #region Public Methods and Operators
 
-        public void Publish(Event @event)
+        public void Publish(AbstractEvent @event)
         {
             this.bus.Publish((dynamic)@event);
         }

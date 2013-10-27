@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("TheRing.MassTransit.RavenDb")]
+[assembly: AssemblyTitle("TheRing.CQRS.MassTransit.RavenDb")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TheRing.MassTransit.RavenDb")]
+[assembly: AssemblyProduct("TheRing.CQRS.MassTransit.RavenDb")]
 [assembly: AssemblyCopyright("Copyright ©TheRing  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

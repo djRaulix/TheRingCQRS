@@ -5,22 +5,24 @@
     using System;
 
     using TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding.Runner;
     using TheRing.CQRS.Eventing;
+    using TheRing.CQRS.Eventing.EventSourced;
 
     #endregion
 
-    public class AggregateRootRepository<TAgg> : IAggregateRootRepository<TAgg>
-        where TAgg : AggregateRoot
+    public class AggregateRootRepository<TAgg> : ICommandRunnerRepository<TAgg>
+        where TAgg : AbstractAggregateRoot
     {
         #region Fields
 
-        private readonly IEventSourcedRepository eventSourcedRepository;
+        private readonly IEventSourcedRepository<TAgg> eventSourcedRepository;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public AggregateRootRepository(IEventSourcedRepository eventSourcedRepository)
+        public AggregateRootRepository(IEventSourcedRepository<TAgg> eventSourcedRepository)
         {
             this.eventSourcedRepository = eventSourcedRepository;
         }
@@ -31,18 +33,18 @@
 
         public TAgg Create(Guid id)
         {
-            return this.eventSourcedRepository.Create<TAgg>(id);
+            return this.eventSourcedRepository.Create(id);
         }
 
         public TAgg Get(Guid id, int? expectedVersion = null)
         {
             try
             {
-                return this.eventSourcedRepository.Get<TAgg>(id, expectedVersion);
+                return this.eventSourcedRepository.Get(id, expectedVersion);
             }
             catch (EventStoreConcurrencyException ex)
             {
-                throw new AggregateRootConcurrencyException(ex.Message);
+                throw new CommandRunnerConcurrencyException(ex.Message);
             }
         }
 
@@ -54,7 +56,7 @@
             }
             catch (EventStoreConcurrencyException ex)
             {
-                throw new AggregateRootConcurrencyException(ex.Message);
+                throw new CommandRunnerConcurrencyException(ex.Message);
             }
         }
 

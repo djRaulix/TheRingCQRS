@@ -33,13 +33,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BusFactory.cs" />
+    <Compile Include="BusFactoryExtensions.cs" />
     <Compile Include="CommandBus.cs" />
-    <Compile Include="CommandConsumer.cs" />
-    <Compile Include="DenormalizerConsumer.cs" />
+    <Compile Include="HandleContext.cs" />
+    <Compile Include="EventConsumer.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="IBusFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SagaStateMachineBase.cs" />
+    <Compile Include="AbstractSagaStateMachineBase.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ServiceBusExtention.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +59,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">

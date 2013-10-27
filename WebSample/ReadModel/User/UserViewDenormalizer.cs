@@ -3,15 +3,16 @@
     #region using
 
     using TheRing.CQRS.Eventing;
+    using TheRing.CQRS.Eventing.EventSourced;
 
-    using WebSample.Eventing;
+    using WebSample.Domain.User;
 
     #endregion
 
-    public class UserViewDenormalizer : Denormalizer, 
-        IDenormalizeEvent<UserCreated>, 
-        IDenormalizeEvent<UserAddressAdded>, 
-        IDenormalizeEvent<UserConfirmed>
+    public class UserViewDenormalizer : AbstractDenormalizer, 
+        ISubscribeEvent<UserCreated>, 
+        ISubscribeEvent<UserAddressAdded>, 
+        ISubscribeEvent<UserConfirmed>
     {
         #region Constructors and Destructors
 
