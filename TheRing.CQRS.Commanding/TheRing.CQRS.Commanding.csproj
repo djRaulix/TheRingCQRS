@@ -32,21 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Bus\AbstactCommandBusDecorator.cs" />
     <Compile Include="Bus\CommandBusExtensions.cs" />
-    <Compile Include="Handler\AbstractHandleExceptionDecorator.cs" />
-    <Compile Include="Handler\AbstractCommandRunnerDecorator.cs" />
-    <Compile Include="Handler\CommandHandler.cs" />
-    <Compile Include="Handler\ConcurrencyExceptionResponse.cs" />
-    <Compile Include="Handler\ExceptionHandler.cs" />
-    <Compile Include="Handler\IHandleException.cs" />
-    <Compile Include="Handler\IRunCommand.cs" />
+    <Compile Include="Bus\Response.cs" />
+    <Compile Include="CommandingException.cs" />
+    <Compile Include="Handler\AbstractCommandHandlerDecorator.cs" />
     <Compile Include="AbstractCommand.cs" />
-    <Compile Include="Handler\DoneResponse.cs" />
     <Compile Include="Bus\ICommandBus.cs" />
-    <Compile Include="Handler\IHandleContext.cs" />
+    <Compile Include="Handler\CommandHandler.cs" />
     <Compile Include="Handler\IHandleCommand.cs" />
+    <Compile Include="Handler\IRunCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Bus\RequestResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Magnum, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
@@ -55,6 +51,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

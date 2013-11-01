@@ -1,30 +1,40 @@
 ﻿namespace TheRing.CQRS.Eventing.EventSourced.Snapshot
 {
+    #region using
+
     using System;
     using System.Collections.Concurrent;
 
-    public class InMemorySnapshotKeeper : ISnapshotKeeper
+    #endregion
+
+    public class InMemorySnapshotKeeper : IKeepSnapshot
     {
-        #region Implementation of ISnapshotKeeper
+        #region Fields
 
-        private readonly ConcurrentDictionary<Guid, object> memory = new ConcurrentDictionary<Guid, object>();
+        private readonly ConcurrentDictionary<Guid, object> memory =
+            new ConcurrentDictionary<Guid, object>();
 
-        public void Delete(Guid id)
+        #endregion
+
+        #region Public Methods and Operators
+
+        public void Delete(ISnaphotable snaphotable)
         {
             object snapshot;
-            this.memory.TryRemove(id, out snapshot);
+            this.memory.TryRemove(snaphotable.Id, out snapshot);
         }
 
-        public object Get(Guid id)
+        public void Restore(ISnaphotable eventSourced)
         {
             object snapshot;
-            this.memory.TryGetValue(id, out snapshot);
-            return snapshot;
+
+            this.memory.TryGetValue(eventSourced.Id, out snapshot);
+            eventSourced.Restore(snapshot);
         }
 
-        public void Set(Guid id, object snapshot)
+        public void Snapshot(ISnaphotable eventSourced)
         {
-            this.memory[id] = snapshot;
+            this.memory[eventSourced.Id] = eventSourced.Snapshot();
         }
 
         #endregion

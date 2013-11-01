@@ -11,6 +11,7 @@
 
     using WebSample.Commanding.User;
     using WebSample.ReadModel;
+    using WebSample.Services.User;
 
     #endregion
 
@@ -38,18 +39,19 @@
         [HttpPost]
         public ActionResult AddAddress(AddUserAddress command)
         {
-            if(this.commandBus.SendOk(command))
+            var result = this.commandBus.SendRequest(command);
+            if (result.Ok)
             {
                 return this.RedirectToAction("Details", new {command.Id});
             }
-            throw new Exception("Error creating address");
+            throw new Exception(result.ErrorMessage);
             
         }
 
         [HttpPost]
         public ActionResult Create(CreateUser command)
         {
-            if (this.commandBus.SendOk(command))
+            if (this.commandBus.SendRequest(command).Ok)
             {
                 return this.RedirectToAction("Index");
             }
@@ -65,6 +67,12 @@
         {
             int nbUsers;
             return this.View(this.repository.GetUserIdentities(1, 20, out nbUsers));
+        }
+
+        public ActionResult DeleteAll()
+        {
+            this.commandBus.Send(new DeleteAllUsers());
+            return this.RedirectToAction("Index");
         }
 
         #endregion

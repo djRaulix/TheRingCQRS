@@ -33,12 +33,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bus\EventBusExtensions.cs" />
-    <Compile Include="EventSourced\Repository\AbstractEventSourcedRepositoryDecorator.cs" />
+    <Compile Include="EventingException.cs" />
+    <Compile Include="EventSourced\AbstractSnapshotableEventSourced.cs" />
+    <Compile Include="EventSourced\Repository\UnKnownEventSourcedException.cs" />
+    <Compile Include="EventSourced\Snapshot\ISnaphotable.cs" />
     <Compile Include="EventSourced\Repository\EventSourcedRepository.cs" />
     <Compile Include="EventSourced\AbstractEventSourced.cs" />
     <Compile Include="EventSourced\Factory\EventSourcedFactory.cs" />
-    <Compile Include="EventSourced\Snapshot\SnaphotEventSourcedRepositoryDecorator.cs" />
-    <Compile Include="EventSourced\Repository\Exception\BadEventSourcedVersionLoadedException.cs" />
     <Compile Include="Denormalizer\AbstractDenormalizer.cs" />
     <Compile Include="AbstractEvent.cs" />
     <Compile Include="EventStore\EventStoreExtensions.cs" />
@@ -49,16 +50,26 @@
     <Compile Include="EventSourced\Repository\IEventSourcedRepository.cs" />
     <Compile Include="EventStore\IEventStore.cs" />
     <Compile Include="EventSourced\Snapshot\InMemorySnapshotKeeper.cs" />
-    <Compile Include="EventSourced\Snapshot\ISnapshotKeeper.cs" />
-    <Compile Include="EventSourced\Repository\Exception\NewerEventSourcedVersionLoadedException.cs" />
+    <Compile Include="EventSourced\Snapshot\IKeepSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EventSourced\Repository\Exception\UnknownEventSourcedException.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -35,5 +35,9 @@
             }
     
         </table>
+        @using (Html.BeginForm("DeleteAll", "User"))
+        {
+            <input type="submit" value="Delete all users" />
+        }
     </body>
 </html>

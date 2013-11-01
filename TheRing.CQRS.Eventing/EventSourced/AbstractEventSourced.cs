@@ -7,7 +7,7 @@
 
     #endregion
 
-    public abstract class AbstractEventSourced 
+    public abstract class AbstractEventSourced
     {
         #region Fields
 
@@ -15,13 +15,11 @@
 
         #endregion
 
-        #region Constructors and Destructors
-
-        #endregion
-
         #region Public Properties
 
         public Guid Id { get; internal set; }
+
+        public int Version { get; protected internal set; }
 
         #endregion
 
@@ -34,8 +32,6 @@
                 return this.changes;
             }
         }
-
-        internal int Version { get; private set; }
 
         protected Guid CurrentCorrelationId { private get; set; }
 
@@ -52,20 +48,8 @@
             }
         }
 
-        internal virtual void Restore(object backup)
+        protected void Apply(AbstractEvent @event)
         {
-            var memento = backup as Memento;
-            if (memento == null)
-            {
-                return;
-            }
-
-            memento.Restore(this);
-        }
-
-        internal virtual object Snapshot()
-        {
-            return new Memento(this);
         }
 
         protected void ApplyChange(AbstractEvent @event)
@@ -79,59 +63,10 @@
             this.changes.Enqueue(@event);
         }
 
-        protected virtual object GetSnapshot()
+        protected virtual void ApplyEvent(dynamic @event)
         {
-            throw new NotSupportedException();
-        }
-
-        protected virtual void RestoreFromSnapshot(object snapshot)
-        {
-            throw new NotSupportedException();
-        }
-
-        private void ApplyEvent(AbstractEvent @event)
-        {
-            if (!@event.Volatile)
-            {
-                this.ApplyGeneric(@event);
-            }
-        }
-
-        protected virtual void ApplyGeneric(AbstractEvent @event)
-        {
-            throw new NotSupportedException();
         }
 
         #endregion
-
-        private class Memento
-        {
-            #region Fields
-
-            private readonly object payload;
-            private readonly int version;
-
-            #endregion
-
-            #region Constructors and Destructors
-
-            internal Memento(AbstractEventSourced eventSourced)
-            {
-                this.version = eventSourced.Version;
-                this.payload = eventSourced.GetSnapshot();
-            }
-
-            #endregion
-
-            #region Methods
-
-            internal void Restore(AbstractEventSourced eventSourced)
-            {
-                eventSourced.Version = this.version;
-                eventSourced.RestoreFromSnapshot(this.payload);
-            }
-
-            #endregion
-        }
     }
 }

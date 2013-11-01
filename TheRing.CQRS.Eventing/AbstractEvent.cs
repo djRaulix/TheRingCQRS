@@ -23,11 +23,6 @@ namespace TheRing.CQRS.Eventing
 
         public DateTime TimeStamp { get; set; }
 
-        public virtual bool Volatile
-        {
-            get { return false; }
-        }
-
         #endregion
     }
 }

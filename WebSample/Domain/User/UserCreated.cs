@@ -14,14 +14,6 @@
 
         public string LastName { get; set; }
 
-        public override bool Volatile
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public bool CanAddAddress { get; set; }
 
         #endregion

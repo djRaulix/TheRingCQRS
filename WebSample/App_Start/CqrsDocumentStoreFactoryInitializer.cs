@@ -8,7 +8,7 @@ namespace WebSample.App_Start
 
     using Raven.Client.Indexes;
 
-    using TheRing.CQRS.Eventing.RavenDb;
+    using TheRing.CQRS.RavenDb.Eventing;
 
     #endregion
 

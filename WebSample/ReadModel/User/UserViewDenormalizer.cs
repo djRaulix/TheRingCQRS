@@ -3,16 +3,17 @@
     #region using
 
     using TheRing.CQRS.Eventing;
-    using TheRing.CQRS.Eventing.EventSourced;
+    using TheRing.CQRS.Eventing.Denormalizer;
 
     using WebSample.Domain.User;
 
     #endregion
 
-    public class UserViewDenormalizer : AbstractDenormalizer, 
-        ISubscribeEvent<UserCreated>, 
-        ISubscribeEvent<UserAddressAdded>, 
-        ISubscribeEvent<UserConfirmed>
+    public class UserViewDenormalizer : AbstractDenormalizer,
+        ISubscribeEvent<UserCreated>,
+        ISubscribeEvent<UserAddressAdded>,
+        ISubscribeEvent<UserConfirmed>,
+        ISubscribeEvent<UserDeleted>
     {
         #region Constructors and Destructors
 
@@ -40,7 +41,7 @@
         public void Consume(UserAddressAdded @event)
         {
             this.Repository.Update<UserView>(
-                @event.EventSourcedId, 
+                @event.EventSourcedId,
                 u =>
                 {
                     u.Addresses.Add(@event.Address);
@@ -58,6 +59,11 @@
                     u.Confirmed = true;
                     u.UserVersion = @event.EventSourcedVersion;
                 });
+        }
+
+        public void Consume(UserDeleted @event)
+        {
+            this.Repository.Delete<UserView>(@event.EventSourcedId);
         }
 
         #endregion

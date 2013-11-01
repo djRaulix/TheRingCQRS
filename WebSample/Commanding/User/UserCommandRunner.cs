@@ -1,36 +1,42 @@
 ﻿namespace WebSample.Commanding.User
 {
+    #region using
+
     using TheRing.CQRS.Application;
 
     using WebSample.Domain.User;
 
-    public class UserCommandRunner : IRunCommand<User,CreateUser>,
-        IRunCommand<User, ConfirmUser>,
-        IRunCommand<User, AddUserAddress>
+    #endregion
+
+    public class UserCommandRunner : IRunCommandOnEventSourced<User, CreateUser>,
+        IRunCommandOnEventSourced<User, ConfirmUser>,
+        IRunCommandOnEventSourced<User, AddUserAddress>,
+        IRunCommandOnEventSourced<User, DeleteUser>
     {
-        #region Implementation of IRunCommand<in User,in CreateUser>
+        #region Public Methods and Operators
 
         public void Run(User user, CreateUser command)
         {
             user.Create(command.FirstName, command.LastName);
         }
 
-        #endregion
-
-        #region Implementation of IRunCommand<in User,in ConfirmUser>
-
         public void Run(User user, ConfirmUser command)
         {
             user.Confirm();
         }
 
-        #endregion
-
-        #region Implementation of IRunCommand<in User,in AddUserAddress>
-
         public void Run(User user, AddUserAddress command)
         {
             user.AddAddress(command.Address);
+        }
+
+        #endregion
+
+        #region Implementation of IRunCommandOnEventSourced<in User,in DeleteUser>
+
+        public void Run(User eventSourced, DeleteUser command)
+        {
+            eventSourced.Delete();
         }
 
         #endregion

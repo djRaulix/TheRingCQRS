@@ -1,4 +1,4 @@
-﻿namespace WebSample.ReadModel
+﻿namespace WebSample.ReadModelImpl.User
 {
     #region using
 
@@ -9,7 +9,9 @@
 
     using Raven.Client;
 
-    using TheRing.CQRS.Eventing.RavenDb;
+    using TheRing.CQRS.RavenDb.Eventing;
+
+    using WebSample.ReadModel;
 
     #endregion
 
@@ -57,6 +59,18 @@
                 return pagedResult;
             }
         }
+
+        public IEnumerable<Guid> GetAllUserIds()
+        {
+            using (var session = this.DocumentStore.OpenSession())
+            {
+                //return only 128 first rows
+                return
+                    session.Query<UserView>()
+                    .Customize(c => c.WaitForNonStaleResultsAsOfLastWrite())
+                    .TransformWith<UserIdTransformer, UserId>().Select(u => u.Id);
+            }
+        } 
 
         public UserView GetUserView(Guid id)
         {

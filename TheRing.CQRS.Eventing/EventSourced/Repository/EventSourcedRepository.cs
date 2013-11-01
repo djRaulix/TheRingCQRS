@@ -3,23 +3,23 @@
     #region using
 
     using System;
-    using System.Linq;
+    using System.ComponentModel.DataAnnotations;
 
     using TheRing.CQRS.Eventing.Bus;
     using TheRing.CQRS.Eventing.EventSourced.Factory;
-    using TheRing.CQRS.Eventing.EventSourced.Repository.Exception;
+    using TheRing.CQRS.Eventing.EventSourced.Snapshot;
     using TheRing.CQRS.Eventing.EventStore;
 
     #endregion
 
-    public class EventSourcedRepository<TEventSourced> : IEventSourcedRepository<TEventSourced>
-        where TEventSourced : AbstractEventSourced
+    public class EventSourcedRepository : IEventSourcedRepository
     {
         #region Fields
 
+        private readonly IEventBus eventBus;
+        private readonly IEventStore eventStore;
         private readonly IEventSourcedFactory factory;
-        private readonly IEventStore store;
-        private readonly IEventBus evenBus;
+        private readonly IKeepSnapshot snapshotKeeper;
 
         #endregion
 
@@ -27,63 +27,70 @@
 
         public EventSourcedRepository(
             IEventSourcedFactory factory,
-            IEventStore store, IEventBus evenBus)
+            IEventStore eventStore,
+            IKeepSnapshot snapshotKeeper,
+            IEventBus eventBus)
         {
             this.factory = factory;
-            this.store = store;
-            this.evenBus = evenBus;
+            this.eventStore = eventStore;
+            this.snapshotKeeper = snapshotKeeper;
+            this.eventBus = eventBus;
         }
 
         #endregion
 
         #region Public Methods and Operators
 
-        public TEventSourced Create(Guid id)
+        public TEventSourced Create<TEventSourced>(Guid id) where TEventSourced : AbstractEventSourced
         {
             var eventSourced = this.factory.New<TEventSourced>();
             eventSourced.Id = id;
             return eventSourced;
         }
 
-        public TEventSourced Get(Guid id, int? expectedVersion = null)
+        public TEventSourced Get<TEventSourced>(Guid id) where TEventSourced : AbstractEventSourced
         {
-            var eventSourced = this.Create(id);
-            if (expectedVersion == 0)
+            var eventSourced = this.Create<TEventSourced>(id);
+            var snapshotable = eventSourced as ISnaphotable;
+            if (snapshotable != null)
             {
-                return eventSourced;
+                try
+                {
+                    this.snapshotKeeper.Restore(snapshotable);
+                }
+                catch
+                {
+                    this.snapshotKeeper.Delete(snapshotable);
+                    eventSourced = this.Create<TEventSourced>(id);
+                }
             }
 
-            this.Refresh(eventSourced);
+            eventSourced.LoadFromHistory(this.eventStore.Get(id, eventSourced.Version + 1));
 
             if (eventSourced.Version == 0)
             {
-                throw new UnknownEventSourcedException(id);
+                throw new UnKnownEventSourcedException(id);
             }
 
-            if (!expectedVersion.HasValue || eventSourced.Version == expectedVersion.Value) return eventSourced;
-
-            if (eventSourced.Version < expectedVersion.Value)
-            {
-                throw new NewerEventSourcedVersionLoadedException(id, eventSourced.Version);
-            }
-            throw new BadEventSourcedVersionLoadedException(id, eventSourced.Version);
-        }
-
-        public void Refresh(AbstractEventSourced eventSourced)
-        {
-            if (eventSourced.Changes.Any())
-            {
-                throw new System.Exception("Can't refresh modified object");
-            }
-            eventSourced.LoadFromHistory(this.store.Get(eventSourced.Id, eventSourced.Version + 1));
+            return eventSourced;
         }
 
         public void Save(AbstractEventSourced eventSourced)
         {
-            this.store.Save(eventSourced.Changes);
-            this.evenBus.Publish(eventSourced.Changes);
-        }
+            this.eventStore.Save(eventSourced.Changes);
+            this.eventBus.Publish(eventSourced.Changes);
 
+            var snapshotable = eventSourced as ISnaphotable;
+            if (snapshotable == null) return;
+
+            try
+            {
+                this.snapshotKeeper.Snapshot(snapshotable);
+            }
+            catch
+            {
+            }
+        }
         #endregion
     }
 }

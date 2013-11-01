@@ -1,12 +1,7 @@
-namespace TheRing.CQRS.Commanding.Handler
+﻿namespace TheRing.CQRS.Commanding.Handler
 {
-    public interface IRunCommand<in TCommand>
-        where TCommand : AbstractCommand
+    public interface IRunCommand<in TCommand> where TCommand : AbstractCommand
     {
-        #region Public Methods and Operators
-
         void Run(TCommand command);
-
-        #endregion
     }
 }

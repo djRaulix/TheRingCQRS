@@ -21,6 +21,8 @@
 
         UserView GetUserView(Guid id);
 
+        IEnumerable<Guid> GetAllUserIds();
+
         #endregion
     }
 }

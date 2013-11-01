@@ -8,16 +8,5 @@
 
     public class UserConfirmed : AbstractEvent
     {
-        #region Public Properties
-
-        public override bool Volatile
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        #endregion
     }
 }

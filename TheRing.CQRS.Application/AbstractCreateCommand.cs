@@ -1,16 +1,35 @@
 ﻿namespace TheRing.CQRS.Application
 {
+    #region using
+
     using System;
 
     using Magnum;
 
+    #endregion
+
     public abstract class AbstractCreateCommand : AbstractEditCommand
     {
-        #region Overrides of EditCommand
+        #region Fields
 
         private Guid id;
 
-        public sealed override Guid Id
+        #endregion
+
+        #region Public Properties
+
+        public override sealed int? ExpectedVersion
+        {
+            get
+            {
+                return 0;
+            }
+            set
+            {
+            }
+        }
+
+        public override sealed Guid Id
         {
             get
             {
@@ -26,21 +45,6 @@
                 this.id = value;
             }
         }
-
-        #region Overrides of EditCommand
-
-        public sealed override int? ExpectedVersion
-        {
-            get
-            {
-                return 0;
-            }
-            set{
-           
-            }
-        }
-
-        #endregion
 
         #endregion
     }

@@ -2,7 +2,7 @@
 {
     #region using
 
-    
+    using TheRing.CQRS.Commanding.Bus;
 
     #endregion
 
@@ -11,7 +11,7 @@
     {
         #region Public Methods and Operators
 
-        void Handle(IHandleContext<TCommand> handleContext);
+        Response Handle(TCommand command);
 
         #endregion
     }

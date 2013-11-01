@@ -36,15 +36,14 @@
       <HintPath>..\packages\Magnum.2.1.0\lib\NET40\Magnum.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractCommandRunnerDecorator.cs" />
-    <Compile Include="NewerEventSourcedConcurrencyHandleContextDecorator.cs" />
-    <Compile Include="CommandRunner.cs" />
+    <Compile Include="EventSourcedCommandHandler.cs" />
     <Compile Include="AbstractCreateCommand.cs" />
     <Compile Include="AbstractEditCommand.cs" />
-    <Compile Include="IRunCommand.cs" />
+    <Compile Include="IRunCommandOnEventSourced.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

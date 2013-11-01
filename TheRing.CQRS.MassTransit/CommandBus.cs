@@ -3,6 +3,7 @@
     #region using
 
     using System;
+    using System.Linq;
 
     using global::MassTransit;
 
@@ -10,7 +11,6 @@
 
     using TheRing.CQRS.Commanding;
     using TheRing.CQRS.Commanding.Bus;
-    using TheRing.CQRS.Commanding.Handler;
     using TheRing.CQRS.MassTransit.Properties;
 
     #endregion
@@ -42,20 +42,22 @@
             this.requestEndPoint.Send(command);
         }
 
-        public RequestResult SendRequest<T>(T command, Guid correlationId) where T : AbstractCommand
+        public Response SendRequest<T>(T command, Guid correlationId) where T : AbstractCommand
         {
+            var timeout = Settings.Default.CommandTimeOut;
             command.CorrelationId = correlationId;
             command.ExpectResponse = true;
-            var response = RequestResult.Failed;
+            var response = new Response(true);
             this.requestEndPoint.SendRequest(
                 command,
                 this.serviceBus,
                 c =>
                 {
-                    c.Handle<DoneResponse>(h => response = RequestResult.Ok);
-                    c.Handle<ConcurrencyExceptionResponse>(h => response = RequestResult.ConcurrencyException);
-                    c.HandleTimeout(30.Seconds(), h => response = RequestResult.Failed);
-                    c.HandleFault(h => response = RequestResult.Failed);
+                    c.Handle<Response>(h => response = h);
+                    c.HandleTimeout(
+                        timeout.Seconds(),
+                        h => response = new Response("TimeOut", string.Format("TimeOut after {0} seconds", timeout)));
+                    c.HandleFault(h => response = new Response(h.FaultType, h.Messages.First()));
                 });
             return response;
         }

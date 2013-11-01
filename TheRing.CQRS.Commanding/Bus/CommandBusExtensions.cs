@@ -11,17 +11,7 @@ namespace TheRing.CQRS.Commanding.Bus
             bus.Send(command, CombGuid.Generate());
         }
 
-        public static bool SendOk<T>(this ICommandBus bus, T command, Guid correlationId) where T : AbstractCommand, new()
-        {
-            return bus.SendRequest(command, correlationId) == RequestResult.Ok;
-        }
-
-        public static bool SendOk<T>(this ICommandBus bus, T command) where T : AbstractCommand, new()
-        {
-            return bus.SendRequest(command) == RequestResult.Ok;
-        }
-
-        public static RequestResult SendRequest<T>(this ICommandBus bus, T command) where T : AbstractCommand, new()
+        public static Response SendRequest<T>(this ICommandBus bus, T command) where T : AbstractCommand, new()
         {
             return bus.SendRequest(command, CombGuid.Generate());
         }

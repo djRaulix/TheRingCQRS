@@ -4,6 +4,8 @@
 
     using System;
 
+    using Magnum.Collections;
+
     #endregion
 
     public class UserIdentity

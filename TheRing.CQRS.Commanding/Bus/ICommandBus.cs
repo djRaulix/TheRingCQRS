@@ -12,7 +12,7 @@
 
         void Send<T>(T command, Guid correlationId) where T : AbstractCommand;
 
-        RequestResult SendRequest<T>(T command, Guid correlationId) where T : AbstractCommand;
+        Response SendRequest<T>(T command, Guid correlationId) where T : AbstractCommand;
 
         #endregion
     }

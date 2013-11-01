@@ -31,8 +31,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.Eventing.RavenDb", "TheRing.CQRS.Eventing.RavenDb\TheRing.CQRS.Eventing.RavenDb.csproj", "{BFFE2398-DF5E-440D-92B6-1B903A533A60}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.Commanding", "TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj", "{1CBB2A4B-B50B-4203-BE76-30BE461969AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ioc", "Ioc", "{94B7BBEC-BD7C-48DD-83DE-5B2C4ECF8492}"
@@ -40,6 +38,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.SimpleInjector", "TheRing.SimpleInjector\TheRing.SimpleInjector.csproj", "{530CC9B0-6761-4322-9E1C-D0858E85B097}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.Application", "TheRing.CQRS.Application\TheRing.CQRS.Application.csproj", "{5A43D301-FA69-47B0-9BEE-5DD57833FB51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheRing.CQRS.RavenDb", "TheRing.CQRS.RavenDb\TheRing.CQRS.RavenDb.csproj", "{BFFE2398-DF5E-440D-92B6-1B903A533A60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,10 +71,6 @@ Global
 		{4725BE52-A933-432B-8712-C27DA1CE0FEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4725BE52-A933-432B-8712-C27DA1CE0FEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4725BE52-A933-432B-8712-C27DA1CE0FEA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CBB2A4B-B50B-4203-BE76-30BE461969AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +83,10 @@ Global
 		{5A43D301-FA69-47B0-9BEE-5DD57833FB51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A43D301-FA69-47B0-9BEE-5DD57833FB51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A43D301-FA69-47B0-9BEE-5DD57833FB51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFFE2398-DF5E-440D-92B6-1B903A533A60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

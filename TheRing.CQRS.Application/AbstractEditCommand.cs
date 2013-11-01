@@ -4,7 +4,7 @@
 
     using System;
 
-    using global::TheRing.CQRS.Commanding;
+    using TheRing.CQRS.Commanding;
 
     #endregion
 

@@ -11,7 +11,7 @@
     {
         #region Public Methods and Operators
 
-        IEnumerable<AbstractEvent> GetEvents(Guid id, int fromVersion, int toVersion);
+        IEnumerable<AbstractEvent> Get(Guid id, int fromVersion, int toVersion);
 
         void Save(IEnumerable<AbstractEvent> events);
 

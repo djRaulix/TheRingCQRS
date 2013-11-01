@@ -1,53 +1,29 @@
-namespace TheRing.CQRS.Commanding.Handler
+﻿namespace TheRing.CQRS.Commanding.Handler
 {
-    using System;
+    using TheRing.CQRS.Commanding.Bus;
 
     public class CommandHandler<TCommand> : IHandleCommand<TCommand> where TCommand : AbstractCommand
     {
-        #region Fields
-
         private readonly IRunCommand<TCommand> runner;
-        private readonly IHandleException exceptionHandler;
 
-        #endregion
-
-        #region Constructors and Destructors
-
-        public CommandHandler(IRunCommand<TCommand> runner, IHandleException exceptionHandler)
+        public CommandHandler(IRunCommand<TCommand> runner)
         {
             this.runner = runner;
-            this.exceptionHandler = exceptionHandler;
         }
 
-        #endregion
+        #region Implementation of IHandleCommand<in TCommand>
 
-        #region Public Methods and Operators
-
-        public void Handle(IHandleContext<TCommand> handleContext)
+        public Response Handle(TCommand command)
         {
-            var command = handleContext.Command;
-
             try
             {
                 this.runner.Run(command);
+                return new Response(true);
             }
-            catch (Exception ex)
+            catch (CommandingException ex)
             {
-                if (exceptionHandler.MustRetry(ex) && handleContext.RetryLater())
-                {
-                    return;
-                }
-
-                if (!command.ExpectResponse) throw;
-
-                handleContext.Respond(exceptionHandler.GetMessage(ex));
-                return;
-            }
-
-            if (command.ExpectResponse)
-            {
-                handleContext.Respond(new DoneResponse());
-            }
+                return new Response(ex);
+            }    
         }
 
         #endregion

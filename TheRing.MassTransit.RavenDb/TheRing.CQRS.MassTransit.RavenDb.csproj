@@ -38,13 +38,19 @@
     <Reference Include="MassTransit">
       <HintPath>..\packages\MassTransit.2.8.0\lib\net40\MassTransit.dll</HintPath>
     </Reference>
-    <Reference Include="Raven.Abstractions">
-      <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Abstractions.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Raven.Client.Lightweight">
-      <HintPath>..\packages\RavenDB.Client.2.5.2700\lib\net45\Raven.Client.Lightweight.dll</HintPath>
+    <Reference Include="Raven.Abstractions, Version=2.5.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Client.2.5.2750\lib\net45\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight, Version=2.5.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Client.2.5.2750\lib\net45\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
@@ -59,7 +65,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ConcurrencyHandleContextDecorator.cs" />
     <Compile Include="SagaRepository.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,24 +74,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TheRing.CQRS.Application\TheRing.CQRS.Application.csproj">
-      <Project>{5A43D301-FA69-47B0-9BEE-5DD57833FB51}</Project>
-      <Name>TheRing.CQRS.Application</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">
-      <Project>{1CBB2A4B-B50B-4203-BE76-30BE461969AE}</Project>
-      <Name>TheRing.CQRS.Commanding</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Eventing\TheRing.CQRS.Eventing.csproj">
-      <Project>{B1B87D37-25CB-4953-97B7-2A7627798D25}</Project>
-      <Name>TheRing.CQRS.Eventing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.RavenDb\TheRing.RavenDb.csproj">
-      <Project>{408CD0DE-26DF-4949-A970-EA7B16669D6F}</Project>
-      <Name>TheRing.RavenDb</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -67,5 +67,14 @@ namespace TheRing.CQRS.MassTransit.Properties {
                 return ((int)(this["NbMaxTries"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int CommandTimeOut {
+            get {
+                return ((int)(this["CommandTimeOut"]));
+            }
+        }
     }
 }

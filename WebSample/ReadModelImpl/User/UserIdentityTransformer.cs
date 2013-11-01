@@ -1,10 +1,12 @@
-﻿namespace WebSample.ReadModel
+﻿namespace WebSample.ReadModelImpl.User
 {
     #region using
 
     using System.Linq;
 
     using Raven.Client.Indexes;
+
+    using WebSample.ReadModel;
 
     #endregion
 

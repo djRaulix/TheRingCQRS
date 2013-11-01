@@ -3,7 +3,6 @@
     #region using
 
     using System;
-    using System.Collections.Specialized;
 
     using Raven.Client;
 

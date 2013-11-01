@@ -6,13 +6,12 @@
 
     #endregion
 
-    public interface IEventSourcedRepository<out TEventSourced> where TEventSourced : AbstractEventSourced
+    public interface IEventSourcedRepository
     {
         #region Public Methods and Operators
 
-        TEventSourced Create(Guid id);
-        TEventSourced Get(Guid id, int? expectedVersion = null);
-        void Refresh(AbstractEventSourced eventSourced);
+        TEventSourced Create<TEventSourced>(Guid id) where TEventSourced : AbstractEventSourced;
+        TEventSourced Get<TEventSourced>(Guid id) where TEventSourced : AbstractEventSourced;
 
         void Save(AbstractEventSourced eventSourced);
 

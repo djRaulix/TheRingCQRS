@@ -1,4 +1,4 @@
-﻿namespace TheRing.CQRS.Eventing
+﻿namespace TheRing.CQRS.Eventing.Denormalizer
 {
     public abstract class AbstractDenormalizer
     {

@@ -31,17 +31,20 @@ namespace WebSample.App_Start
     using TheRing.CQRS.Commanding.Handler;
     using TheRing.CQRS.Eventing;
     using TheRing.CQRS.Eventing.Bus;
+    using TheRing.CQRS.Eventing.Denormalizer;
     using TheRing.CQRS.Eventing.EventSourced.Factory;
     using TheRing.CQRS.Eventing.EventSourced.Repository;
     using TheRing.CQRS.Eventing.EventSourced.Snapshot;
     using TheRing.CQRS.Eventing.EventStore;
-    using TheRing.CQRS.Eventing.RavenDb;
     using TheRing.CQRS.MassTransit;
     using TheRing.CQRS.MassTransit.RavenDb;
+    using TheRing.CQRS.RavenDb.Commanding;
+    using TheRing.CQRS.RavenDb.Eventing;
     using TheRing.RavenDb;
 
     using WebSample.Domain.User;
     using WebSample.ReadModel;
+    using WebSample.ReadModelImpl.User;
     using WebSample.Sagas;
 
     #endregion
@@ -70,6 +73,7 @@ namespace WebSample.App_Start
             LoadRavenDbImplementation(container);
 
             var commandHandlers = LoadCommandLayer(container).ToList();
+            commandHandlers.AddRange(LoadApplicationLayer(container));
             var readModelHandlers = LoadEventLayer(container).ToList();
             var sagaHandlers = LoadSagaLayer().ToList();
 
@@ -86,19 +90,13 @@ namespace WebSample.App_Start
 
         private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadCommandLayer(Container container)
         {
-            container.RegisterOpenGeneric(typeof(HandleContext<>), typeof(HandleContext<>));
-            container.RegisterSingle<IHandleException,ExceptionHandler>();
-            container.RegisterSingleDecorator(
-                typeof(IHandleException),
-                typeof(NewerEventSourcedConcurrencyHandleExceptionDecorator));
-            container.RegisterSingleDecorator(typeof(IHandleException), typeof(ConcurrencyHandleExceptionDecorator));
-            container.RegisterSingleOpenGeneric(typeof(IHandleCommand<>), typeof(CommandHandler<>));
-
+            container.RegisterSingleOpenGeneric(typeof(CommandConsumer<>), typeof(CommandConsumer<>));
             var runners =
                 from r in typeof(User).Assembly.GetExportedTypes().Where(t => !t.IsAbstract)
                 from i in
                     r.GetInterfaces()
-                        .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRunCommand<,>))
+                        .Where(
+                            t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRunCommand<>))
                 group i by r
                 into grp
                 where grp.Any()
@@ -110,13 +108,51 @@ namespace WebSample.App_Start
                 foreach (var type in runner)
                 {
                     container.AddRegistration(type, registration);
-                    var args = type.GenericTypeArguments;
-                    var command = args[1];
-                    var commandRunnerType = typeof(CommandRunner<,>).MakeGenericType(args);
-                    var runCommandInterface = typeof(IRunCommand<>).MakeGenericType(command);
+                    var commandType = type.GenericTypeArguments.First();
 
-                    container.RegisterSingle(runCommandInterface, commandRunnerType);
-                    var contextHandler = typeof(HandleContext<>).MakeGenericType(command);
+                    var handlerInterface = typeof(IHandleCommand<>).MakeGenericType(commandType);
+                    var handlerType = typeof(CommandHandler<>).MakeGenericType(commandType);
+                    container.RegisterSingle(handlerInterface, handlerType);
+
+                    var consumerType = typeof(CommandConsumer<>).MakeGenericType(commandType);
+
+                    yield return
+                        new KeyValuePair<Type, Func<object>>(
+                            consumerType,
+                            () => container.GetInstance(consumerType));
+                }
+            }
+        }
+
+        private static IEnumerable<KeyValuePair<Type, Func<object>>> LoadApplicationLayer(Container container)
+        {
+            var runners =
+                from r in typeof(User).Assembly.GetExportedTypes().Where(t => !t.IsAbstract)
+                from i in
+                    r.GetInterfaces()
+                        .Where(
+                            t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRunCommandOnEventSourced<,>))
+                group i by r
+                    into grp
+                    where grp.Any()
+                    select grp;
+
+            foreach (var runner in runners)
+            {
+                var registration = Lifestyle.Singleton.CreateRegistration(runner.Key, runner.Key, container);
+                foreach (var type in runner)
+                {
+                    container.AddRegistration(type, registration);
+                    var args = type.GenericTypeArguments;
+                    var commandType = args[1];
+                    var handlerType = typeof(EventSourcedCommandHandler<,>).MakeGenericType(args);
+                    var handlerInterface = typeof(IHandleCommand<>).MakeGenericType(commandType);
+                    var concurrencyDecoratorType = typeof(ConcurrencyCommandHandlerDecorator<>).MakeGenericType(commandType);
+
+                    container.RegisterSingle(handlerInterface, handlerType);
+                    container.RegisterDecorator(handlerInterface, concurrencyDecoratorType);
+
+                    var contextHandler = typeof(CommandConsumer<>).MakeGenericType(commandType);
 
                     yield return
                         new KeyValuePair<Type, Func<object>>(
@@ -130,14 +166,8 @@ namespace WebSample.App_Start
         {
             container.RegisterSingleOpenGeneric(typeof(EventConsumer<>), typeof(EventConsumer<>));
             container.RegisterSingle<IEventSourcedFactory>(() => new EventSourcedFactory(container.GetInstance));
-            container.RegisterSingleOpenGeneric(typeof(IEventSourcedRepository<>), typeof(EventSourcedRepository<>));
-            container.RegisterSingleDecorator(
-                typeof(IEventSourcedRepository<User>),
-                typeof(SnaphotEventSourcedRepositoryDecorator<User>));
-            container.RegisterSingle<InMemorySnapshotKeeper>();
-
-            container.RegisterWithContext<ISnapshotKeeper>(
-                context => { return container.GetInstance<InMemorySnapshotKeeper>(); });
+            container.RegisterSingle<IEventSourcedRepository, EventSourcedRepository>();
+            container.RegisterSingle<IKeepSnapshot, InMemorySnapshotKeeper>();
 
             var subscribers = from type in typeof(User).Assembly.GetExportedTypes()
                 where !type.IsAbstract
@@ -184,7 +214,7 @@ namespace WebSample.App_Start
                 {
                     if (context.ImplementationType == typeof(CommandBus))
                     {
-                        return factory.RequestQueue();
+                        return factory.ResponseQueue();
                     }
                     return factory.ReadModelQueue();
                 });

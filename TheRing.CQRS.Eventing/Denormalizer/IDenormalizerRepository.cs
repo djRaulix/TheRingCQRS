@@ -1,9 +1,8 @@
-﻿namespace TheRing.CQRS.Eventing
+﻿namespace TheRing.CQRS.Eventing.Denormalizer
 {
     #region using
 
     using System;
-    using System.Linq.Expressions;
 
     #endregion
 

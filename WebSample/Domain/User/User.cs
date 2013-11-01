@@ -2,12 +2,13 @@
 {
     #region using
 
-    using TheRing.CQRS.Eventing;
     using TheRing.CQRS.Eventing.EventSourced;
+
+    using WebSample.Exceptions;
 
     #endregion
 
-    public class User : AbstractEventSourced
+    public class User : AbstractSnapshotableEventSourced
     {
         #region Constants
 
@@ -25,15 +26,16 @@
 
         public void AddAddress(string address)
         {
-            if (MaxAddresses > this.nbAddresses)
+            if (this.nbAddresses >= MaxAddresses)
             {
-                this.ApplyChange(
+                throw new MaxNbAddressesReachedException();
+            }
+            this.ApplyChange(
                     new UserAddressAdded
                     {
                         Address = address,
                         CanAddAddress = this.nbAddresses < MaxAddresses - 1
-                    });
-            }
+                    });  
         }
 
         public void Confirm()
@@ -55,12 +57,7 @@
         #endregion
 
         #region Methods
-
-        protected override void ApplyGeneric(AbstractEvent @event)
-        {
-            this.Apply((dynamic)@event);
-        }
-
+        
         protected override object GetSnapshot()
         {
             return this.nbAddresses;
@@ -77,5 +74,19 @@
         }
 
         #endregion
+
+        #region Overrides of AbstractEventSourced
+
+        protected override void ApplyEvent(dynamic @event)
+        {
+            this.Apply(@event);
+        }
+
+        #endregion
+
+        public void Delete()
+        {
+            this.ApplyChange(new UserDeleted());
+        }
     }
 }
