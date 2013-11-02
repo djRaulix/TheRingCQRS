@@ -6,7 +6,6 @@
 
     using Raven.Client.Indexes;
 
-    using WebSample.ReadModel;
     using WebSample.ReadModel.User;
 
     #endregion
