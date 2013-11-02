@@ -32,25 +32,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FakeItEasy">
+    <Reference Include="FakeItEasy, Version=1.13.1.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FakeItEasy.1.13.1\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions">
-      <HintPath>..\packages\FluentAssertions.2.1.0.0\lib\net45\FluentAssertions.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
+    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fakes\FakeCommandRunner.cs" />
+    <Compile Include="UsingAbstractCommandBusDecorator\AndRequestingCommand.cs" />
+    <Compile Include="UsingAbstractCommandBusDecorator\AndSendingCommand.cs" />
+    <Compile Include="UsingAbstractCommandBusDecorator\UsingAbstractCommandBusDecorator.cs" />
     <Compile Include="Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,10 +57,6 @@
     <ProjectReference Include="..\TheRing.CQRS.Commanding\TheRing.CQRS.Commanding.csproj">
       <Project>{1CBB2A4B-B50B-4203-BE76-30BE461969AE}</Project>
       <Name>TheRing.CQRS.Commanding</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheRing.CQRS.Domain\TheRing.CQRS.Domain.csproj">
-      <Project>{F63A407A-4EB7-4223-8730-B44E504476CF}</Project>
-      <Name>TheRing.CQRS.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheRing.Test\TheRing.Test.csproj">
       <Project>{C53B5138-1B0A-438A-9439-3A0E6E7AA329}</Project>

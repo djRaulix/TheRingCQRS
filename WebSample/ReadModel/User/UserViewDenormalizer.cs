@@ -1,4 +1,4 @@
-﻿namespace WebSample.ReadModel
+﻿namespace WebSample.ReadModel.User
 {
     #region using
 

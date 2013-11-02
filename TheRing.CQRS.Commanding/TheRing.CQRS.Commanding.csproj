@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="Bus\AbstactCommandBusDecorator.cs" />
     <Compile Include="Bus\CommandBusExtensions.cs" />
+    <Compile Include="Bus\CommandBus.cs" />
     <Compile Include="Bus\Response.cs" />
     <Compile Include="CommandingException.cs" />
     <Compile Include="Handler\AbstractCommandHandlerDecorator.cs" />

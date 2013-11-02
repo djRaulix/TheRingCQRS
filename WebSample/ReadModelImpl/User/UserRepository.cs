@@ -12,6 +12,7 @@
     using TheRing.CQRS.RavenDb.Eventing;
 
     using WebSample.ReadModel;
+    using WebSample.ReadModel.User;
 
     #endregion
 

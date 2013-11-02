@@ -11,6 +11,7 @@
 
     using WebSample.Commanding.User;
     using WebSample.ReadModel;
+    using WebSample.ReadModel.User;
     using WebSample.Services.User;
 
     #endregion

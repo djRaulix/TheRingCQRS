@@ -29,8 +29,7 @@
                             .Then(
                                 (saga, message) =>
                                     saga.CommandBus.Send(
-                                        new ConfirmUser { Id = saga.CorrelationId },
-                                        saga.CorrelationId))
+                                        new ConfirmUser { Id = saga.CorrelationId }, saga.CorrelationId))
                             .TransitionTo(ConfirmingUser));
                     During(ConfirmingUser, When(UserConfirmed).Complete());
                 });

@@ -34,7 +34,7 @@
   <ItemGroup>
     <Compile Include="BusFactory.cs" />
     <Compile Include="BusFactoryExtensions.cs" />
-    <Compile Include="CommandBus.cs" />
+    <Compile Include="MasstransitCommandBusDecorator.cs" />
     <Compile Include="CommandConsumer.cs" />
     <Compile Include="EventConsumer.cs" />
     <Compile Include="EventBus.cs" />
@@ -46,7 +46,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ServiceBusExtention.cs" />
+    <Compile Include="Services.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Magnum">

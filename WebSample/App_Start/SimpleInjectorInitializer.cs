@@ -44,6 +44,7 @@ namespace WebSample.App_Start
 
     using WebSample.Domain.User;
     using WebSample.ReadModel;
+    using WebSample.ReadModel.User;
     using WebSample.ReadModelImpl.User;
     using WebSample.Sagas;
 
@@ -209,6 +210,7 @@ namespace WebSample.App_Start
             factory.InitEventing(eventConsumers, config);
             container.RegisterSingle<IEventBus, EventBus>();
             container.RegisterSingle<ICommandBus, CommandBus>();
+            container.RegisterSingleDecorator(typeof(ICommandBus), typeof(MassTransitCommandBusDecorator));
             container.RegisterWithContext(
                 context =>
                 {
@@ -266,6 +268,7 @@ namespace WebSample.App_Start
 
         private static void LoadSagas(Container container, IEnumerable<Type> sagaConsumers)
         {
+            Services.CommandBus = container.GetInstance<ICommandBus>();
             container.GetInstance<IBusFactory>().InitSagas(sagaConsumers, sbc => sbc.UseRabbitMq());
         }
 

@@ -10,9 +10,9 @@ namespace TheRing.CQRS.Commanding
     {
         #region Public Properties
 
-        public Guid CorrelationId { get; set; }
+        public Guid CorrelationId { get; internal set; }
 
-        public bool ExpectResponse { get; set; }
+        public bool ExpectResponse { get; internal set; }
 
         #endregion
     }

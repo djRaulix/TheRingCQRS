@@ -1,4 +1,4 @@
-﻿namespace WebSample.ReadModel
+﻿namespace WebSample.ReadModel.User
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,7 @@
     {
         public UserView()
         {
-            Addresses = new List<string>();
+            this.Addresses = new List<string>();
         }
 
         public Guid UserViewId { get; set; }

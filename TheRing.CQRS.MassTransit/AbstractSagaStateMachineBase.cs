@@ -9,7 +9,6 @@
 
     using Magnum.StateMachine;
 
-    using TheRing.CQRS.Commanding;
     using TheRing.CQRS.Commanding.Bus;
 
     #endregion
@@ -17,48 +16,27 @@
     public abstract class AbstractSagaStateMachineBase<T> : SagaStateMachine<T>, ISaga
         where T : AbstractSagaStateMachineBase<T>
     {
-        #region Fields
-
-        private IServiceBus bus;
-
-        #endregion
-
         #region Constructors and Destructors
 
         protected AbstractSagaStateMachineBase(Guid correlationId)
         {
             this.CorrelationId = correlationId;
+            this.CommandBus = Services.CommandBus;
         }
 
         #endregion
 
         #region Public Properties
 
+        protected ICommandBus CommandBus { get; set; }
+
         public static State Completed { get; set; }
 
         public static State Initial { get; set; }
 
-        public IServiceBus Bus
-        {
-            get
-            {
-                return this.bus;
-            }
-
-            set
-            {
-                this.bus = value;
-                this.CommandBus = this.bus.CommandBus();
-            }
-        }
+        public IServiceBus Bus { get; set; }
 
         public Guid CorrelationId { get; set; }
-
-        #endregion
-
-        #region Properties
-
-        protected ICommandBus CommandBus { get; private set; }
 
         #endregion
 
