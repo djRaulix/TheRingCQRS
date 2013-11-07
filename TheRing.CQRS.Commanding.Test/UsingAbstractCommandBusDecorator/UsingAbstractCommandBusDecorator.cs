@@ -18,9 +18,9 @@
 
         #region Overrides of SpecBase
 
-        protected override void Establish_context()
+        protected override void EstablishContext()
         {
-            base.Establish_context();
+            base.EstablishContext();
             this.Command = A.Fake<AbstractCommand>();
             this.CorrelationId = Guid.NewGuid();
             this.CommandBus = A.Fake<ICommandBus>();

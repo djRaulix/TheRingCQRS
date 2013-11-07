@@ -14,8 +14,8 @@
         [TestFixtureSetUp]
         public virtual void MainSetup()
         {
-            this.Establish_context();
-            this.Because_of();
+            this.EstablishContext();
+            this.BecauseOf();
         }
 
         [TestFixtureTearDown]
@@ -28,7 +28,7 @@
 
         #region Methods
 
-        protected virtual void Because_of()
+        protected virtual void BecauseOf()
         {
         }
 
@@ -36,7 +36,7 @@
         {
         }
 
-        protected virtual void Establish_context()
+        protected virtual void EstablishContext()
         {
         }
 

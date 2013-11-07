@@ -13,6 +13,17 @@
 
         private readonly Queue<AbstractEvent> changes = new Queue<AbstractEvent>();
 
+        private dynamic concrete;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        protected AbstractEventSourced()
+        {
+            this.concrete = this;
+        }
+
         #endregion
 
         #region Public Properties
@@ -47,8 +58,8 @@
                 this.ApplyEvent(@event);
             }
         }
-
-        protected void Apply(AbstractEvent @event)
+          
+        internal void Apply(AbstractEvent @event)
         {
         }
 
@@ -63,8 +74,9 @@
             this.changes.Enqueue(@event);
         }
 
-        protected virtual void ApplyEvent(dynamic @event)
+        private void ApplyEvent(dynamic @event)
         {
+            concrete.Apply(@event);
         }
 
         #endregion

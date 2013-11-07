@@ -31,11 +31,11 @@
                 throw new MaxNbAddressesReachedException();
             }
             this.ApplyChange(
-                    new UserAddressAdded
-                    {
-                        Address = address,
-                        CanAddAddress = this.nbAddresses < MaxAddresses - 1
-                    });  
+                new UserAddressAdded
+                {
+                    Address = address,
+                    CanAddAddress = this.nbAddresses < MaxAddresses - 1
+                });
         }
 
         public void Confirm()
@@ -54,10 +54,20 @@
                 });
         }
 
+        public void Delete()
+        {
+            this.ApplyChange(new UserDeleted());
+        }
+
         #endregion
 
         #region Methods
-        
+
+        internal void Apply(UserAddressAdded @event)
+        {
+            this.nbAddresses++;
+        }
+
         protected override object GetSnapshot()
         {
             return this.nbAddresses;
@@ -68,25 +78,6 @@
             this.nbAddresses = (int)snapshot;
         }
 
-        private void Apply(UserAddressAdded @event)
-        {
-            this.nbAddresses++;
-        }
-
         #endregion
-
-        #region Overrides of AbstractEventSourced
-
-        protected override void ApplyEvent(dynamic @event)
-        {
-            this.Apply(@event);
-        }
-
-        #endregion
-
-        public void Delete()
-        {
-            this.ApplyChange(new UserDeleted());
-        }
     }
 }

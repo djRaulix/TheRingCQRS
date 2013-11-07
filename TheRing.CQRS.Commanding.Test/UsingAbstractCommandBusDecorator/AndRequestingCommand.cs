@@ -23,15 +23,15 @@ namespace TheRing.CQRS.Commanding.Test.UsingAbstractCommandBusDecorator
 
         #region Methods
 
-        protected override void Because_of()
+        protected override void BecauseOf()
         {
-            base.Because_of();
+            base.BecauseOf();
             this.Decorator.SendRequest(this.Command,this.CorrelationId);
         }
 
-        protected override void Establish_context()
+        protected override void EstablishContext()
         {
-            base.Establish_context();
+            base.EstablishContext();
 
             this.Decorator.CallsTo(d => d.SendRequest(this.Command, this.CorrelationId)).CallsBaseMethod();
         }
