@@ -29,9 +29,18 @@ namespace TheRing.CQRS.Eventing.Test.Fakes
             this.ApplyChange(EventThatModifyInternalState);
         }
 
-        internal void Apply(FakeAnOtherEvent @event)
+        private void Apply(FakeAnOtherEvent @event)
         {
             InternalStateModified = true;
         }
+
+        #region Overrides of AbstractEventSourced
+
+        protected override void ApplyEvent(dynamic @event)
+        {
+            this.Apply(@event);
+        }
+
+        #endregion
     }
 }

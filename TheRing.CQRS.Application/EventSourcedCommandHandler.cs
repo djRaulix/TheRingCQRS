@@ -49,6 +49,7 @@
             else
             {
                 eventSourced = this.repository.Get<TEventSourced>(command.Id);
+                eventSourced.CurrentCorrelationId = command.CorrelationId;
 
                 if (!(command.ExpectedVersion == null || command.ExpectedVersion == eventSourced.Version))
                 {

@@ -44,7 +44,7 @@
             }
         }
 
-        protected Guid CurrentCorrelationId { private get; set; }
+        public Guid CurrentCorrelationId { private get; set; }
 
         #endregion
 
@@ -74,9 +74,8 @@
             this.changes.Enqueue(@event);
         }
 
-        private void ApplyEvent(dynamic @event)
+        protected virtual void ApplyEvent(dynamic @event)
         {
-            concrete.Apply(@event);
         }
 
         #endregion

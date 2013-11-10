@@ -63,7 +63,7 @@
 
         #region Methods
 
-        internal void Apply(UserAddressAdded @event)
+        private void Apply(UserAddressAdded @event)
         {
             this.nbAddresses++;
         }
@@ -76,6 +76,15 @@
         protected override void RestoreFromSnapshot(object snapshot)
         {
             this.nbAddresses = (int)snapshot;
+        }
+
+        #endregion
+
+        #region Overrides of AbstractEventSourced
+
+        protected override void ApplyEvent(dynamic @event)
+        {
+            this.Apply(@event);
         }
 
         #endregion
