@@ -1,7 +1,7 @@
 TheRingCQRS
 ===========
 
-CQRS framework with event sourced domain
+CQRS sample with event sourced domain
 
 to run the web sample you must:
 - install ravenDb server (http://hibernatingrhinos.com/downloads/RavenDB%20Installer/2750) download page : http://ravendb.net/download
